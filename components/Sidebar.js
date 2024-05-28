@@ -27,7 +27,7 @@ export default function Sidebar() {
       <nav className="mt-4">
         <ul>
           <li className="py-2 px-4 hover:bg-gray-700">
-            <Link className="flex items-center space-x-2" href="/emails">
+            <Link className="flex items-center space-x-2" href="/inbox">
                 <svg
                   className="w-6 h-6"
                   fill="none"

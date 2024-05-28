@@ -9,16 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "axios": "^1.7.2",
+    "formik": "^2.4.6",
     "next": "14.2.3",
     "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18",
-    "session": "^0.1.0"
+    "session": "^0.1.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
+    "prisma": "^5.14.0",
     "tailwindcss": "^3.4.1"
   }
 }

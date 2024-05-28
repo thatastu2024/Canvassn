@@ -14,9 +14,8 @@ export default function Navbar() {
   return (
     <nav className="bg-gray-800 p-4">
       <div className="container mx-auto flex justify-between items-center">
-        {/* <Link className="text-white text-lg font-semibold" href="/">
-            Home
-        </Link> */}
+        <Link className="text-white text-lg font-semibold" href="/">
+        </Link>
         <div className="relative">
         {session ? (
             <div className="flex items-center space-x-4">

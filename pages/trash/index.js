@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import EmailListComponent from '../../components/EmailList'
-export default function EmailList(){
+import TrashComponent from '../../components/Trash'
+export default function Trash(){
     return(
         <EmailListComponent></EmailListComponent>
     )
