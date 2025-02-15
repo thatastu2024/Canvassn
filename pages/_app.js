@@ -1,15 +1,24 @@
 import '../styles/globals.css';
-import { SessionProvider } from 'next-auth/react';
-import Layout from '../components/Layout';
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import Layout from "../components/Layout";
+
 
 function MyApp({ Component, pageProps }) {
-  return (
-    <SessionProvider session={pageProps.session}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </SessionProvider>
-  );
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false) 
+  useEffect(() => {
+    if (router.pathname === "/") {
+      let token=localStorage.getItem('token')
+      setIsAuthenticated(!!token);
+      if(!token && router.pathname !== 'login'){
+        setIsAuthenticated(false)
+        router.push("/login");
+      }
+    }
+  }, [router.pathname]);
+
+  return <Component {...pageProps} isAuthenticated={isAuthenticated} />;
 }
 
 export default MyApp;

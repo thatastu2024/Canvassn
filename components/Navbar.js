@@ -1,9 +1,7 @@
 import Link from 'next/link';
-import { signIn, signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 export default function Navbar() {
-  const { data: session } = useSession();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -17,12 +15,12 @@ export default function Navbar() {
         <Link className="text-white text-lg font-semibold" href="/">
         </Link>
         <div className="relative">
-        {session ? (
+        {/* {session ? ( */}
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <button onClick={toggleDropdown} className="focus:outline-none">
                   <img
-                    src={session?.session?.user?.image || '/default-avatar.png'}
+                    src='/default-avatar.png'
                     alt="Profile"
                     className="w-10 h-10 rounded-full"
                   />
@@ -42,14 +40,14 @@ export default function Navbar() {
                 )}
               </div>
             </div>
-          ) : (
+          {/* ) : ( */}
             <button
               onClick={() => signIn()}
               className="bg-blue-600 text-white px-3 py-1 rounded"
             >
               Sign in
             </button>
-          )}
+          {/* )} */}
         </div>
       </div>
     </nav>

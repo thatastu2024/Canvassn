@@ -1,18 +1,33 @@
 // pages/login.js
-import React, { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from "next/router";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState("");
+  const router = useRouter();
 
+  // useEffect
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await signIn('credentials', { redirect: false, email, password });
-  };
+    setError("");
+    let payload = {
+      email:email,
+      password:password
+    }
 
-  const handleOAuthSignIn = async (provider) => {
-    await signIn(provider);
+    try{
+      const response = await axios.post('/api/auth/login',payload, { withCredentials: true })
+      if(response.hasOwnProperty('data')){
+        localStorage.setItem('token',response.data.token)
+      }
+      alert("Login successful!");
+      router.push("/");
+    }catch(error){
+      setError(error.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (
@@ -55,7 +70,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
                 id="remember_me"
@@ -73,7 +88,7 @@ export default function LoginPage() {
                 Forgot your password?
               </a>
             </div>
-          </div>
+          </div> */}
 
           <div>
             <button
@@ -84,7 +99,7 @@ export default function LoginPage() {
             </button>
           </div>
         </form>
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
@@ -116,7 +131,7 @@ export default function LoginPage() {
               </svg>
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

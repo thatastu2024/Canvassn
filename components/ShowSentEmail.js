@@ -6,25 +6,25 @@ const EmailDetail = () => {
   const { id } = router.query;
   const [email, setEmail] = useState(null);
 
-  useEffect(() => {
-    if (id) {
-      const fetchEmail = async () => {
-        try {
-          const response = await fetch(`/api/get-email?id=${id}`);
-          const data = await response.json();
-          setEmail(data);
-        } catch (error) {
-          console.error('Error fetching email:', error);
-        }
-      };
+  // useEffect(() => {
+  //   if (id) {
+  //     const fetchEmail = async () => {
+  //       try {
+  //         const response = await fetch(`/api/get-email?id=${id}`);
+  //         const data = await response.json();
+  //         setEmail(data);
+  //       } catch (error) {
+  //         console.error('Error fetching email:', error);
+  //       }
+  //     };
 
-      fetchEmail();
-    }
-  }, [id]);
+  //     fetchEmail();
+  //   }
+  // }, [id]);
 
-  if (!email) {
+  // if (!email) {
     return <div>Loading...</div>;
-  }
+  // }
 
   return (
     <div className="container mx-auto px-4 py-6">

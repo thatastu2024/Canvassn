@@ -1,0 +1,33 @@
+import connectDB from "../../../lib/mongodb";
+import User from "../../../models/AdminUsers";
+import { generateToken } from "../../../utils/jwt";
+import bcrypt from 'bcryptjs'
+
+export default async function handler(req, res) {
+  if (req.method !== "POST") return res.status(405).json({ message: "Method not allowed" });
+
+  await connectDB();
+
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) return res.status(400).json({ message: "User not found" });
+
+  const isMatch = await comparePassword(password,user.password);
+  if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+  // Generate JWT token
+  const token = generateToken(user);
+  console.log(token)
+
+  return res.status(200).json({ message: "Login successful", token });
+}
+
+async function bcryptPassword(password){
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+}
+
+async function comparePassword(password,dbpassword){
+    return bcrypt.compare(password, dbpassword);
+}
