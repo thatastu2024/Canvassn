@@ -1,16 +1,20 @@
 import connectDB from "../../lib/mongodb";
-import User from "../../models/AdminUsers";
-
+import AdminUser from "../../models/AdminUsers";
+import bcrypt from 'bcryptjs'
 export default async function handler(req, res) {
   await connectDB(); // Connect to MongoDB
 
   if (req.method === "POST") {
     try {
-      const { name, email, password, user_unique_token } = req.body;
-      const newUser = new User({ name, email, password, user_unique_token });
+      console.log(req.body)
+      const requestBody = req.body;
+      requestBody.password=await bcryptPassword(requestBody.password)
+      console.log(requestBody)
+      const newUser = new AdminUser(requestBody);
       await newUser.save();
       return res.status(201).json({ message: "User created successfully", newUser });
     } catch (error) {
+      console.log(error)
       return res.status(500).json({ error: error.message });
     }
   }
@@ -25,4 +29,9 @@ export default async function handler(req, res) {
   }
 
   return res.status(405).json({ message: "Method not allowed" });
+}
+
+async function bcryptPassword(password){
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
 }

@@ -1,6 +1,5 @@
-// pages/login.js
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from "next/router";
 
 export default function LoginPage() {
