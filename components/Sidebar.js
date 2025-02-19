@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
+import { FaRobot, FaHistory, FaBook, FaPhone, FaCog } from "react-icons/fa";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
@@ -26,20 +27,20 @@ export default function Sidebar() {
       </div>
       <nav className="mt-4">
         <ul>
-          <li className="py-2 px-4 hover:bg-gray-700">
-            <Link className="flex items-center space-x-2" href="/agents">
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5M5 11L9 7M5 11l4 4"></path>
-                </svg>
-                <span className={`${isOpen ? 'block' : 'hidden'}`}>Agents</span>
+          {[
+            { name: "Dashboard", icon: <FaRobot />, path: "/dashboard" },
+            { name: "Agents", icon: <FaRobot />, path: "/agents" },
+            { name: "Call History", icon: <FaHistory />, path: "/history" },
+            { name: "Knowledge Base", icon: <FaBook />, path: "/knowledge" },
+            { name: "Phone Numbers", icon: <FaPhone />, path: "/phone" },
+            { name: "Settings", icon: <FaCog />, path: "/settings" },
+          ].map((item)=>(
+            <li className="py-2 px-4 hover:bg-gray-700">
+            <Link className="flex items-center space-x-2" key={item.name} href={item.path}>
+            {item.icon} <span className={`${isOpen ? 'block' : 'hidden'}`}>{item.name}</span>
             </Link>
           </li>
+          ))}
         </ul>
       </nav>
     </div>

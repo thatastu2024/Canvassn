@@ -10,7 +10,8 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <Layout></Layout>
+    <></>
+    // <Layout></Layout>
   )
 };
 

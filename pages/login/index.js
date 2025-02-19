@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useRouter } from "next/router";
 
 export default function LoginPage() {
@@ -8,7 +8,15 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  // useEffect
+  useEffect(()=>{
+    if (router.pathname === "/login") {
+      let token=localStorage.getItem('token')
+      if(token && router.pathname === '/login'){
+        console.log("Move Forward")
+        router.push("/");
+      }
+    }
+  })
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");

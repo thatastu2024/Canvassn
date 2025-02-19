@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-export default function EmailListComponent() {
+export default function AgentListComponent() {
   const [agents,setAgents] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,17 +15,15 @@ export default function EmailListComponent() {
                   "Content-Type": "application/json",
               }
           })
-          console.log(response)
-            // if (!response.ok) {
-            //   throw new Error("Failed to fetch data");
-            // }
-            // const result = await response.json();
-            // setData(result);
+            if (!response.data.data.length) {
+              throw new Error("Failed to fetch data");
+            }
+            setAgents(response?.data?.data);
           } catch (error) {
             console.log(error)
-            // setError(error.message);
+            setError(error.message);
           } finally {
-            // setLoading(false);
+            setLoading(false);
           }
       };
       fetchData()
@@ -34,22 +32,28 @@ export default function EmailListComponent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        Loading emails...
+        Loading agents...
       </div>
     );
   }
 
+  if(!agents.length === 0 || agents === undefined){
+    return <p className="text-gray-500 p-4">No data found.</p>;
+  }
+
   return (
-    <div className="bg-white shadow-md rounded-lg p-4">
-      <h2 className="text-2xl font-bold mb-4">Inbox</h2>
-      {/* <ul>
-        {emails.map((email) => (
-          <li key={email.id} className="border-b border-gray-200 py-2">
-            <p className="font-semibold">{email.subject}</p>
-            <p className="text-sm text-gray-600">{email.sender}</p>
-          </li>
-        ))}
-      </ul> */}
-    </div>
+    <div className="w-1/3 p-0 border-r">
+    <h2 className="text-lg font-bold mb-4">AI Agents</h2>
+    <hr/>
+    {agents.map((agent, index) => (
+      <div
+        key={index}
+        className="p-3 bg-white-200 rounded-lg cursor-pointer hover:bg-gray-200 mb-2"
+        onClick={() => onSelect(agent)}
+      >
+        {agent.name}
+      </div>
+    ))}
+  </div>
   );
 }

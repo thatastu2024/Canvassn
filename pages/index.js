@@ -2,8 +2,9 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Layout from "../components/Layout";
 
-export default function Home() {
+export default function Home({ Component, pageProps }) {
   return (
-    <Layout></Layout>
+    <></>
+    // <Layout></Layout>
   );
 }

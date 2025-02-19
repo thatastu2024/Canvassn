@@ -18,7 +18,7 @@ function MyApp({ Component, pageProps }) {
     }
   }, [router.pathname]);
 
-  return <Component {...pageProps} isAuthenticated={isAuthenticated} />;
+  return (<Layout><Component {...pageProps} isAuthenticated={isAuthenticated} /></Layout>);
 }
 
 export default MyApp;
