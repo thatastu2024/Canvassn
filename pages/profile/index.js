@@ -46,11 +46,11 @@ export default function ProfilePage() {
         <h2 className="text-2xl font-bold text-center">Profile</h2>
         <div className="mt-8 space-y-6">
           <div className="flex items-center justify-center mb-4">
-            <img
+            {/* <img
               src={session?.session?.user?.image || '/default-avatar.png'}
               alt={session?.session?.user?.name}
               className="w-24 h-24 rounded-full"
-            />
+            /> */}
           </div>
           <div className="flex flex-col items-center">
             <h3 className="text-xl font-semibold">{session?.session?.user?.name}</h3>

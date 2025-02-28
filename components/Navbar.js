@@ -19,11 +19,11 @@ export default function Navbar() {
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <button onClick={toggleDropdown} className="focus:outline-none">
-                  <img
+                  {/* <img
                     src='/default-avatar.png'
                     alt="Profile"
                     className="w-10 h-10 rounded-full"
-                  />
+                  /> */}
                 </button>
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20">

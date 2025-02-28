@@ -7,7 +7,7 @@ export default function SentComponent() {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   useEffect(() => {
-    fetchEmails();
+    // fetchEmails();
   }, [page, limit]);
 
   const fetchEmails = async () => {

@@ -28,14 +28,14 @@ export default function Sidebar() {
       <nav className="mt-4">
         <ul>
           {[
-            { name: "Dashboard", icon: <FaRobot />, path: "/dashboard" },
-            { name: "Agents", icon: <FaRobot />, path: "/agents" },
-            { name: "Call History", icon: <FaHistory />, path: "/conversations" },
-            { name: "Knowledge Base", icon: <FaBook />, path: "/knowledge" },
-            { name: "Phone Numbers", icon: <FaPhone />, path: "/phone" },
-            { name: "Settings", icon: <FaCog />, path: "/settings" },
+            { id:1, name: "Dashboard", icon: <FaRobot />, path: "/dashboard" },
+            { id:2, name: "Agents", icon: <FaRobot />, path: "/agents" },
+            { id:3, name: "Call History", icon: <FaHistory />, path: "/conversations" },
+            { id:4, name: "Knowledge Base", icon: <FaBook />, path: "/knowledge" },
+            { id:5, name: "Phone Numbers", icon: <FaPhone />, path: "/phone" },
+            { id:6, name: "Settings", icon: <FaCog />, path: "/settings" },
           ].map((item)=>(
-            <li className="py-2 px-4 hover:bg-gray-700">
+            <li key={item.key} className="py-2 px-4 hover:bg-gray-700">
             <Link className="flex items-center space-x-2" key={item.name} href={item.path}>
             {item.icon} <span className={`${isOpen ? 'block' : 'hidden'}`}>{item.name}</span>
             </Link>
