@@ -1,18 +1,12 @@
-import { useSession,signIn,signOut } from 'next-auth/react';
-import SignOutButton from '../components/SignOutButton';
-import Link from 'next/link';
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import Layout from "../components/Layout";
 
-export default function Home() {
-  const session = useSession();
-    console.log(session?.data?.session)
-    if(session?.data === null){
-        return (
-            <button onClick={signIn}>
-                Login
-            </button>
-        )
-    }
+export default function Home({ Component, pageProps }) {
   return (
-    <div></div>
+    <>
+    {/* <elevenlabs-convai agent-id="Q0qpooaUMUYKJxUXnAU1"></elevenlabs-convai><script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script> */}
+    </>
+    // <Layout></Layout>
   );
 }
