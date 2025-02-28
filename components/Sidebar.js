@@ -30,7 +30,7 @@ export default function Sidebar() {
           {[
             { name: "Dashboard", icon: <FaRobot />, path: "/dashboard" },
             { name: "Agents", icon: <FaRobot />, path: "/agents" },
-            { name: "Call History", icon: <FaHistory />, path: "/history" },
+            { name: "Call History", icon: <FaHistory />, path: "/conversations" },
             { name: "Knowledge Base", icon: <FaBook />, path: "/knowledge" },
             { name: "Phone Numbers", icon: <FaPhone />, path: "/phone" },
             { name: "Settings", icon: <FaCog />, path: "/settings" },

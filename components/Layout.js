@@ -1,6 +1,6 @@
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import ComposeButton from './Compose';
+import BotButton from './Bot';
 
 export default function Layout({ children }) {
   return (
@@ -10,7 +10,7 @@ export default function Layout({ children }) {
       {/* <Navbar /> */}
       <main className="flex-1 p-4 bg-gray-100 overflow-auto">
         {children}
-        <ComposeButton />
+        <BotButton />
       </main>
     </div>
     </div>
