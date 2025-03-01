@@ -1,9 +1,17 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import BotCard from './BotCard';
 export default function AgentListComponent() {
   const [agents,setAgents] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedAgent,setSelectedAgent] = useState({
+    _id:0,
+    agent_id:0,
+    agent_name:"",
+    avatar:""
+  })
+  const [isSelected,setIsSelected] = useState(false)
 
   useEffect(()=>{
       const fetchData = async () => {
@@ -41,19 +49,44 @@ export default function AgentListComponent() {
     return <p className="text-gray-500 p-4">No data found.</p>;
   }
 
+  const onSelect = (agent) =>{
+    setSelectedAgent(()=>({
+      _id:agent._id,
+      agent_id:agent.agent_id,
+      agent_name:agent.name,
+      avatar:agent.avatar
+    }))
+    setIsSelected(true)
+  }
+
   return (
-    <div className="w-1/3 p-0 border-r">
-    <h2 className="text-lg font-bold mb-4">AI Agents</h2>
-    <hr/>
-    {agents.map((agent, index) => (
-      <div
-        key={index}
-        className="p-3 bg-white-200 rounded-lg cursor-pointer hover:bg-gray-200 mb-2"
-        onClick={() => onSelect(agent)}
-      >
-        {agent.name}
+    <div>
+      <div className="grid grid-cols-2 gap-4 p-4 border">
+        <div className="p-4 border-r">
+          <h2 className="text-lg font-bold mb-4">AI Agents</h2>
+          <hr />
+          {agents.map((agent, index) => (
+            <div
+              key={index}
+              className="p-3 bg-white rounded-lg cursor-pointer hover:bg-gray-200 mb-2"
+              onClick={() => onSelect(agent)}
+            >
+              {agent.name}
+            </div>
+          ))}
+        </div>
+        <div className="p-4">
+          <h2 className="text-lg font-bold mb-4">{selectedAgent.agent_name}</h2>
+          <hr />
+          {
+            isSelected ? (
+              <BotCard agentDataProps={selectedAgent}></BotCard>
+            ) : (
+              <h2 className="text-gray-500 text-2xl font-semibold">No Agent Selected</h2>
+            )
+          }
+        </div>
       </div>
-    ))}
-  </div>
+    </div>
   );
 }

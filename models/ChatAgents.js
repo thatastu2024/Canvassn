@@ -6,7 +6,8 @@ const ChatAgentSchema = new mongoose.Schema(
     conversation_config: { type: mongoose.Schema.Types.Mixed, required: true },
     platform_settings: { type: mongoose.Schema.Types.Mixed, required: true },
     secrets: { type: mongoose.Schema.Types.Mixed, required: true },
-    agent_id: { type: String, required: true }
+    agent_id: { type: String, required: true },
+    avatar: { type: String, required: true },
   },
   { timestamps: true }
 );
