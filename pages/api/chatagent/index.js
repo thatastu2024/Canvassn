@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
     if (req.method === "GET") {
         try {
-          const agents = await ChatAgent.find({},"_id, name");
+          const agents = await ChatAgent.find({},"_id, name agent_id avatar");
           return res.status(200).json({ success: true, data: agents });
         } catch (error) {
           return res.status(500).json({ success: false, error: error.message });
