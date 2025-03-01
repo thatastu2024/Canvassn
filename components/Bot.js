@@ -167,7 +167,7 @@ function InitiatetBotForm({ closePopup }) {
       </div>
       {status === "connected" && (
         <p className="text-green-600">
-          {isSpeaking ? "Bot:"+{aiText} : "User:"+{userText}}
+          {isSpeaking ? "Bot:"+(aiText) : "User:"+(userText)}
         </p>
       )}
     </div>

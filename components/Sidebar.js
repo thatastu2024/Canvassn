@@ -32,8 +32,7 @@ export default function Sidebar() {
             { id:2, name: "Agents", icon: <FaRobot />, path: "/agents" },
             { id:3, name: "Call History", icon: <FaHistory />, path: "/conversations" },
             { id:4, name: "Knowledge Base", icon: <FaBook />, path: "/knowledge" },
-            { id:5, name: "Phone Numbers", icon: <FaPhone />, path: "/phone" },
-            { id:6, name: "Settings", icon: <FaCog />, path: "/settings" },
+            { id:5, name: "Settings", icon: <FaCog />, path: "/settings" },
           ].map((item)=>(
             <li key={item.key} className="py-2 px-4 hover:bg-gray-700">
             <Link className="flex items-center space-x-2" key={item.name} href={item.path}>
