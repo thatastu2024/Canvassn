@@ -1,13 +1,20 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { FaRobot, FaHistory, FaBook, FaPhone, FaCog } from "react-icons/fa";
+import { useRouter } from "next/router";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
+  const router = useRouter();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+
+  const logout = () => {
+    localStorage.removeItem('token')
+    router.push("/login");
+  }
 
   return (
     <div className={`bg-gray-800 text-white h-full ${isOpen ? 'w-64' : 'w-20'} transition-width duration-300`}>
@@ -34,13 +41,19 @@ export default function Sidebar() {
             { id:4, name: "Knowledge Base", icon: <FaBook />, path: "/knowledge-base" },
             { id:5, name: "Settings", icon: <FaCog />, path: "/settings" },
           ].map((item)=>(
-            <li key={item.key} className="py-2 px-4 hover:bg-gray-700">
+            <li key={item.id} className="py-2 px-4 hover:bg-gray-700">
             <Link className="flex items-center space-x-2" key={item.name} href={item.path}>
             {item.icon} <span className={`${isOpen ? 'block' : 'hidden'}`}>{item.name}</span>
             </Link>
           </li>
           ))}
         </ul>
+      </nav>
+      <nav className="mt-20">
+      <button className="flex items-center space-x-5 bg-red-600 px-20 py-2 rounded-md hover:bg-red-700"
+        onClick={logout}>
+          <span className="text-sm">Logout</span>
+        </button>
       </nav>
     </div>
   );
