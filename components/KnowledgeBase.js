@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-export default function knowledgeBaseListComponent() {
+export default function KnowledgeBaseListComponent() {
   const [knowledgeBaseList, setKnowledgeBaseList] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
