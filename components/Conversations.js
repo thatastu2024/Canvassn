@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComments, faCommentDots, faClock } from "@fortawesome/free-solid-svg-icons";
+import {formatHumanReadableDate} from '../utils/dateUtil'
 export default function ConversationsListComponent() {
   const [conversations,setConversations] = useState();
   const [loading, setLoading] = useState(true);
@@ -9,22 +12,16 @@ export default function ConversationsListComponent() {
       const fetchData = async () => {
           try {
           let token=localStorage.getItem('token')
-          const response = await axios.get('/api/conversations',{
-              params:{
-                agent_id:'06BV0iCFoKRUp63IpyDs',
-                page_size:'100'
-              },
+          const response = await axios.get('/api/bot',{
               headers:{
                   Authorization:'Bearer '+token,
                   "Content-Type": "application/json",
               }
           })
-          console.log(response.data.data.conversations)
             if (!response.data.data.length) {
               throw new Error("Failed to fetch data");
             }
-            console.log(response?.data?.data?.conversations)
-            setConversations(response?.data?.data?.conversations);
+            setConversations(response?.data?.data);
           } catch (error) {
             console.log(error)
             setError(error.message);
@@ -42,23 +39,63 @@ export default function ConversationsListComponent() {
       </div>
     );
   }
+  
   if(!conversations?.length === 0 || conversations === undefined){
     return <p className="text-gray-500 p-4">No data found.</p>;
   }
 
   return (
-    <div className="w-1/3 p-0 border-r">
-    <h2 className="text-lg font-bold mb-4">AI Agents</h2>
-    <hr/>
-    {conversations?.map((data, index) => (
-      <div
-        key={index}
-        className="p-3 bg-white-200 rounded-lg cursor-pointer hover:bg-gray-200 mb-2"
-        onClick={() => onSelect(data)}
-      >
-        {data.agent_name}
+    <>
+    <div className="p-6">
+      <h2 className="text-xl font-semibold mb-4">Conversation History</h2>
+    </div>
+    <div className="overflow-x-auto">
+      <div className="flex justify-between mb-4">
+        <select className="border rounded px-3 py-2 text-gray-600">
+          <option>Success</option>
+          <option>Failed</option>
+        </select>
+        <select className="border rounded px-3 py-2 text-gray-600">
+          <option>All agents</option>
+        </select>
       </div>
-    ))}
-  </div>
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+        {conversations.map((conversation, index) => (
+          <tr key={index} className="hover:bg-gray-100">
+            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><FontAwesomeIcon icon={faComments} /> {formatHumanReadableDate(conversation.start_time_unix_secs)}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{conversation.agent_name}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><FontAwesomeIcon icon={faCommentDots} /> {conversation.transcript ? conversation.transcript.length : 0}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><FontAwesomeIcon icon={faClock} /> {conversation.call_duration_secs}</td>
+            <td className={`px-6 py-4 whitespace-nowrap text-sm ${
+              conversation.status === "processing" ? "text-yellow-500" : "text-green-500"
+            }`}>{conversation.status}</td>
+          </tr>
+        ))}
+        </tbody>
+      </table>
+      <div className="flex justify-between items-center mt-4">
+        {/* <button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 1}
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span className="text-sm text-gray-700">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          onClick={() => setPage(page + 1)}
+          disabled={page === totalPages}
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50"
+        >
+          Next
+        </button> */}
+      </div>
+    </div>
+    </>
   );
 }

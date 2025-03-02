@@ -1,18 +1,21 @@
-import connectDB from "../../../lib/mongodb";
 import Conversation from "../../../models/Conversations";
 export default async function handler(req, res) {
 
     if (req.method === "GET") {
-        
+        try {
+          let conversations = await Conversation.find({},'_id agent_id agent_name status conversation_id call_duration_secs call_successful start_time_unix_secs transcript')
+          return res.status(200).json({ success: true, data: conversations });
+        } catch (error) {
+          console.log(error)
+          return res.status(500).json({ success: false, error: error.message });
+        }
     }
     
     if (req.method === "POST") {
         try {
             let requestBody=req.body
-            console.log(requestBody)
             if(requestBody.data.hasOwnProperty('conversation_id')){
                 let finalResponse=requestBody.data
-                console.log(finalResponse)
                 await Conversation.create(finalResponse);
                 return res.status(201).json({ success: true, message: "Conversation record inserted successfully" });
             }
