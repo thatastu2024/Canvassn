@@ -31,7 +31,7 @@ export default function LoginPage() {
         localStorage.setItem('token',response.data.token)
       }
       alert("Login successful!");
-      router.push("/");
+      router.push("/dashboard");
     }catch(error){
       setError(error.response?.data?.message || "Something went wrong");
     }
@@ -40,7 +40,7 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-8 bg-white shadow-md rounded-lg">
-        <h2 className="text-2xl font-bold text-center">Login</h2>
+        <h1 className="text-2xl font-bold text-center">Canvassn</h1>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>

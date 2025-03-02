@@ -5,15 +5,10 @@ export default async function handler(req, res) {
 
     if (req.method === "GET") {
         try {
-            let queryParams=req.query
-            console.log("request",req)
-            const response = await axios.get(process.env.NEXT_PUBLIC_ELEVEN_LABS_API_BASEURL+'/conversations?agent_id='+queryParams.agent_id+'&page_size='+queryParams.page_size,
-                {
-                    headers:{
-                    'xi-api-key':process.env.NEXT_PUBLIC_ELEVEN_LABS_VALUE,
-                    "Content-Type": "application/json",
-                    }
-            })
+            // let queryParams=req.query
+            // console.log("request",req)
+            const agents = await ChatAgent.find({});
+            return res.status(200).json({ success: true, data: agents });
           return res.status(200).json({ success: true, data: response.data });
         } catch (error) {
           return res.status(500).json({ success: false, error: error.message });
