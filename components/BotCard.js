@@ -12,6 +12,7 @@ export default function BotCard({agentDataProps}) {
     const [errorMessage, setErrorMessage] = useState("");
     const [aiText,setAiText] = useState("");
     const [userText,setUserText] = useState("");
+    const [historyId,setHistoryId] = useState()
     
     const conversation =useConversation({
         onConnect: () => {
@@ -57,11 +58,13 @@ export default function BotCard({agentDataProps}) {
           const conversationId = await conversation.startSession({
             agentId: agentDataProps.agent_id 
           });
+          setHistoryId(conversationId)
           console.log("Started conversation:", conversationId);
           let token=localStorage.getItem('token')
           const response = await axios.post('/api/bot',{
             data:{
               agent_id:agentDataProps.agent_id,
+              agent_name:agentDataProps.agent_name,
               conversation_id:conversationId
             },
             headers:{
@@ -78,6 +81,23 @@ export default function BotCard({agentDataProps}) {
       const handleEndConversation = async () => {
         try {
           await conversation.endSession();
+          const conversationalData = await axios.get(process.env.NEXT_PUBLIC_ELEVEN_LABS_API_BASEURL+'/conversations/'+historyId,{
+            headers:{
+            'xi-api-key':process.env.NEXT_PUBLIC_ELEVEN_LABS_VALUE,
+            "Content-Type": "application/json",
+            }
+          })
+          if(conversationalData !== undefined){
+            let payload=conversationalData?.data
+            let token=localStorage.getItem('token')
+            const response = await axios.patch('/api/bot/'+historyId,{
+              payload,
+              headers:{
+                  Authorization:'Bearer '+token,
+                  "Content-Type": "application/json",
+              }
+            })
+          }
         } catch (error) {
           setErrorMessage("Failed to end conversation");
           console.error("Error ending conversation:", error);
@@ -96,6 +116,8 @@ export default function BotCard({agentDataProps}) {
       return (
         <div className="flex flex-col items-center justify-center  bg-gradient-to-b from-white-100 to-blue-100 p-2">
       <h4>Powered by Canvassn</h4>
+      <h2 className="text-lg font-semibold text-gray-900">Voice Chat</h2>
+      <div className="bg-white rounded-2xl shadow-lg p-6 w-96">
         <div className="flex flex-col items-center">
             <Image 
                 src={agentDataProps.avatar} 
@@ -105,10 +127,7 @@ export default function BotCard({agentDataProps}) {
                 className="rounded-full mb-6 mt-4"
             />
         </div>
-
-      <div className="bg-white rounded-2xl shadow-lg p-6 w-96">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Voice Chat</h2>
+        <div className="flex justify-center items-center mb-4">
           <button className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200"
           onClick={toggleMute}
           disabled={status !== "connected"}
