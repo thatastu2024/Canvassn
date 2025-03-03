@@ -4,6 +4,7 @@ import axios from "axios";
 export default async function handler(req, res) {
 
     if (req.method === "GET") {
+      await connectDB();
         try {
           const agents = await ChatAgent.find({},"_id, name agent_id avatar").limit(10);
           return res.status(200).json({ success: true, data: agents });
