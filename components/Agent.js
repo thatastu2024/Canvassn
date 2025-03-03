@@ -88,7 +88,7 @@ export default function AgentListComponent() {
           }
           {
             isSelected ? (
-              <p className='flex-1 bg-transparent text-sm outline-none'>{`<canvassn-chat-widget agent-id="${selectedAgent.agent_id}"></voice-chat-widget>
+              <p className='flex-1 bg-transparent text-sm outline-none'>{`<canvassn-chat-widget agent-id="${selectedAgent.agent_id}"></canvassn-chat-widget>
           <script src="https://ai-voice-bot-mauve.vercel.app/canvassn-chat-widget.js" async></script>`}</p>
             ) : ("")
           }
