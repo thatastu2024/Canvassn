@@ -124,7 +124,7 @@ function InitiatetBotForm({ closePopup,agentDataProps  }) {
               </div>
               <div className="flex flex-col items-center justify-center  bg-gradient-to-b from-white-100 to-blue-100 p-2">
                 <h4>Powered by Canvassn</h4>
-                <h2 className="text-lg font-semibold text-gray-900">Canvassn Eric</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{agentDataProps.agent_name}</h2>
               </div>
               <div className="flex justify-center items-center mb-4">
                   <Image 
