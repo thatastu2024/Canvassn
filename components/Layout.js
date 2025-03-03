@@ -10,7 +10,7 @@ export default function Layout({ children }) {
       {/* <Navbar /> */}
       <main className="flex-1 p-4 bg-gray-100 overflow-auto">
         {children}
-        <BotButton />
+        {/* <BotButton /> */}
       </main>
     </div>
     </div>
