@@ -113,6 +113,7 @@ export default function BotCard({agentDataProps}) {
         }
       };
       return (
+        <>
       <div className="flex flex-col items-center justify-center  bg-gradient-to-b from-white-100 to-blue-100 p-2">
         <h4>Powered by Canvassn</h4>
         <h2 className="text-lg font-semibold text-gray-900">Voice Chat</h2>
@@ -172,6 +173,7 @@ export default function BotCard({agentDataProps}) {
             {isSpeaking ? "Bot:"+(aiText) : "User:"+(userText)}
           </p>
         )}
-    </div>  
+    </div> 
+    </> 
       );
 }
