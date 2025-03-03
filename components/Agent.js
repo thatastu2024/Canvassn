@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import BotCard from './BotCard';
+import BotButton from './Bot';
 export default function AgentListComponent() {
   const [agents,setAgents] = useState();
   const [loading, setLoading] = useState(true);
@@ -87,6 +88,13 @@ export default function AgentListComponent() {
           }
         </div>
       </div>
+      {
+            isSelected ? (
+              <BotButton agentDataProps={selectedAgent} />
+            ) : (
+              ""
+            )
+      }
     </div>
   );
 }
