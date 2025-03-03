@@ -9,7 +9,6 @@ export default async function handler(req, res) {
         const schemaId= await Conversation.findOne({
           conversation_id:conversation_id
         },{_id:1}).exec()
-        console.log(schemaId)
         if(schemaId !== undefined){
           let finalUpdateData={
             agent_id:payload?.agent_id,
