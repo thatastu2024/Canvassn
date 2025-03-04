@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import BotCard from './BotCard';
 import BotButton from './Bot';
+import { faLink} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export default function AgentListComponent() {
   const [agents,setAgents] = useState();
   const [loading, setLoading] = useState(true);
@@ -61,6 +63,7 @@ export default function AgentListComponent() {
   }
 
   return (
+    <>
     <div>
       <div className="grid grid-cols-2 gap-4 p-4 border">
         <div className="p-4 border-r">
@@ -73,6 +76,8 @@ export default function AgentListComponent() {
               onClick={() => onSelect(agent)}
             >
               {agent.name}
+              {/* &nbsp;
+              <FontAwesomeIcon icon={faLink} /> */}
             </div>
           ))}
         </div>
@@ -86,12 +91,12 @@ export default function AgentListComponent() {
               <h2 className="text-gray-500 text-2xl font-semibold">No Agent Selected</h2>
             )
           }
-          {
+          {/* {
             isSelected ? (
               <p className='flex-1 bg-transparent text-sm outline-none'>{`<canvassn-chat-widget agent-id="${selectedAgent.agent_id}"></canvassn-chat-widget>
           <script src="https://ai-voice-bot-mauve.vercel.app/canvassn-chat-widget.js" async></script>`}</p>
             ) : ("")
-          }
+          } */}
         </div>
       </div>
       {
@@ -102,5 +107,6 @@ export default function AgentListComponent() {
             )
       }
     </div>
+    </>
   );
 }
