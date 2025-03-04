@@ -1,7 +1,8 @@
 import Conversation from "../../../models/Conversations";
 import axios from 'axios';
+import connectDB from "../../../lib/mongodb";
 export default async function handler(req, res) {
-  
+  await connectDB();
     if (req.method === "PATCH") {
       try {
         const {conversation_id} = req?.query;
@@ -22,7 +23,6 @@ export default async function handler(req, res) {
             analysis: payload?.analysis,
             conversation_initiation_client_data:payload?.conversation_initiation_client_data
         }
-        // {new Date(email?.createdAt).toLocaleTimeString()}
         const updatedAgent = await Conversation.findByIdAndUpdate(schemaId, finalUpdateData, { new: true });
   
         if (!updatedAgent) return res.status(404).json({ message: "Conversation data not found" });

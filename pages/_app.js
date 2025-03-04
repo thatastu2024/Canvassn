@@ -14,12 +14,14 @@ function MyApp({ Component, pageProps }) {
       setIsAuthenticated(false)
       router.push("/login");
     }else{
+      // console.log("router path",router.pathname)
       setIsAuthenticated(!!token);
     }
   }, [router.pathname]);
 
   return (
     <>
+      <canvassn-chat-widget agent-id="y9VYoVeweQ2xyfNfAFPb"></canvassn-chat-widget> <script src="https://ai-voice-bot-mauve.vercel.app/canvassn-chat-widget.js" async></script>
       {
         isAuthenticated ? 
           (

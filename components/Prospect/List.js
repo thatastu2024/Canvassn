@@ -1,0 +1,96 @@
+import  {React, useState, useEffect } from "react";
+import axios from 'axios';
+
+export default function ProspectList() {
+  const [error, setError] = useState("");
+  const [prospects,setProspects] = useState();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+        let token=localStorage.getItem('token')
+        const response=await axios.get('/api/prospects',{
+          headers:{
+              Authorization:'Bearer '+token,
+              "Content-Type": "application/json",
+          }
+        })
+        console.log(response)
+          if (!response.data.data.length) {
+            throw new Error("Failed to fetch data");
+          }
+          setProspects(response?.data?.data);
+        } catch (error) {
+          console.log(error)
+          setError(error.message);
+        } finally {
+          setLoading(false);
+        }
+    };
+    fetchData()
+  }, []);
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading agents...
+      </div>
+    );
+  }
+
+  if(!prospects?.length === 0 || prospects === undefined){
+    return <p className="text-gray-500 p-4">No data found.</p>;
+  }
+  return (
+    <>
+        <div className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Prospects</h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+                <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Location
+                    </th>
+                </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+            {prospects.map((prospect, index) => (
+              <tr key={index} className="hover:bg-gray-100">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{prospect.prospect_name}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{prospect.prospect_email}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{prospect.prospect_location}</td>
+              </tr>
+            ))}
+            </tbody>
+          </table>
+          <div className="flex justify-between items-center mt-4">
+            {/* <button
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="text-sm text-gray-700">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              onClick={() => setPage(page + 1)}
+              disabled={page === totalPages}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50"
+            >
+              Next
+            </button> */}
+          </div>
+        </div>
+        </>
+  );
+}
