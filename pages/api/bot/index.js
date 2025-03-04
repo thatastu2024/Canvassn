@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       await connectDB();
         try {
-          let conversations = await Conversation.find({},'_id agent_id agent_name status conversation_id call_duration_secs call_successful start_time_unix_secs transcript').limit(10)
+          let conversations = await Conversation.find({},'_id agent_id agent_name status conversation_id call_duration_secs call_successful start_time_unix_secs transcript').sort({createdAt : -1})
           return res.status(200).json({ success: true, data: conversations });
         } catch (error) {
           console.log(error)

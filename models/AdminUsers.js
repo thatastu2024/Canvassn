@@ -6,6 +6,7 @@ const AdminUserSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     user_unique_token: { type: String, required: true, unique: true },
     password: { type: String, required: false },
+    user_type: { type: String, enum: ["admin", "customer"], required: true }
   },
   { timestamps: true }
 );

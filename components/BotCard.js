@@ -64,7 +64,8 @@ export default function BotCard({agentDataProps}) {
             data:{
               agent_id:agentDataProps.agent_id,
               agent_name:agentDataProps.agent_name,
-              conversation_id:conversationId
+              conversation_id:conversationId,
+              status:'processing'
             },
             headers:{
                 Authorization:'Bearer '+token,
@@ -80,14 +81,12 @@ export default function BotCard({agentDataProps}) {
       const handleEndConversation = async () => {
         try {
           await conversation.endSession();
-          const conversationalData = await axios.get(process.env.NEXT_PUBLIC_ELEVEN_LABS_API_BASEURL+'/conversations/'+historyId,{
-            headers:{
-            'xi-api-key':process.env.NEXT_PUBLIC_ELEVEN_LABS_VALUE,
-            "Content-Type": "application/json",
-            }
-          })
+          const url = process.env.NEXT_PUBLIC_ELEVEN_LABS_API_BASEURL+'/conversations/'+historyId;
+          const options = {method: 'GET', headers: {'xi-api-key': process.env.NEXT_PUBLIC_ELEVEN_LABS_VALUE}};
+          const response = await fetch(url, options);
+          const conversationalData = await response.json();
           if(conversationalData !== undefined){
-            let payload=conversationalData?.data
+            let payload=conversationalData
             let token=localStorage.getItem('token')
             const response = await axios.patch('/api/bot/'+historyId,{
               payload,
