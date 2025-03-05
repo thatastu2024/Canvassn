@@ -1,5 +1,6 @@
 import  {React, useState, useEffect } from "react";
 import axios from 'axios';
+import {formatDateTime} from '../../utils/dateUtil'
 
 export default function ProspectList() {
   const [error, setError] = useState("");
@@ -16,7 +17,6 @@ export default function ProspectList() {
               "Content-Type": "application/json",
           }
         })
-        console.log(response)
           if (!response.data.data.length) {
             throw new Error("Failed to fetch data");
           }
@@ -33,7 +33,7 @@ export default function ProspectList() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        Loading agents...
+        Loading prospects...
       </div>
     );
   }
@@ -59,6 +59,9 @@ export default function ProspectList() {
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Location
                     </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Created At
+                    </th>
                 </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -67,6 +70,7 @@ export default function ProspectList() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{prospect.prospect_name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{prospect.prospect_email}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{prospect.prospect_location}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{formatDateTime(prospect.createdAt)}</td>
               </tr>
             ))}
             </tbody>

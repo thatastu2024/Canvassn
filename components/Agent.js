@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import BotCard from './BotCard';
 import BotButton from './Bot';
-import { faLink} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ViewAgentComponent from './Prospect/ViewAgent';
 export default function AgentListComponent() {
   const [agents,setAgents] = useState();
   const [loading, setLoading] = useState(true);
@@ -107,6 +106,7 @@ export default function AgentListComponent() {
             )
       }
     </div>
+    <ViewAgentComponent></ViewAgentComponent>
     </>
   );
 }

@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       await connectDB();
       try {
-        const prospects = await Prospects.find({},"_id, prospect_name prospect_email prospect_location").sort({createdAt : -1});
+        const prospects = await Prospects.find({},"_id, prospect_name prospect_email prospect_location createdAt").sort({createdAt : -1});
         return res.status(200).json({ success: true, data: prospects });
       } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
