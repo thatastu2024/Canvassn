@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComments, faCommentDots, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faComments, faCommentDots, faClock, faRefresh } from "@fortawesome/free-solid-svg-icons";
 import {formatHumanReadableDate,formatTime} from '../utils/dateUtil'
 export default function ConversationsListComponent() {
   const [conversations,setConversations] = useState();
@@ -51,13 +51,30 @@ export default function ConversationsListComponent() {
   }
 
   const HandleSync = async () =>{
-    let token=localStorage.getItem('token')
-    await axios.get('/api/webhook',{
-      headers:{
-          Authorization:'Bearer '+token,
-          "Content-Type": "application/json",
-      }
-    })
+    try {
+      let token=localStorage.getItem('token')
+      await axios.get('/api/webhook',{
+        headers:{
+            Authorization:'Bearer '+token,
+            "Content-Type": "application/json",
+        }
+      })
+      const response = await axios.get('/api/bot',{
+          headers:{
+              Authorization:'Bearer '+token,
+              "Content-Type": "application/json",
+          }
+      })
+        if (!response.data.data.length) {
+          throw new Error("Failed to fetch data");
+        }
+        setConversations(response?.data?.data);
+    } catch (error) {
+      console.log(error)
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -78,6 +95,26 @@ export default function ConversationsListComponent() {
       </div>
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
+          <tr>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Call happend At
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Agent
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Messages
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Call Duration
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Status
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Re-process
+            </th>
+          </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
         {conversations.map((conversation, index) => (
@@ -89,6 +126,12 @@ export default function ConversationsListComponent() {
             <td className={`px-6 py-4 whitespace-nowrap text-sm ${
               conversation.status === "processing" ? "text-yellow-500" : "text-green-500"
             }`}>{conversation.status}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {
+                conversation.status === "processing" ?
+                <FontAwesomeIcon icon={faRefresh} />
+                :'success'
+              }</td>
           </tr>
         ))}
         </tbody>

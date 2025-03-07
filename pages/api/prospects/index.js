@@ -8,7 +8,23 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       await connectDB();
       try {
-        const prospects = await Prospects.find({},"_id, prospect_name prospect_email prospect_location").sort({createdAt : -1});
+        let paramsData=req.query
+        let filterData={};
+        let sortData={};
+        if(paramsData.filterField === "search"){
+            filterData = {
+                $or: [
+                  { name: { $regex: search, $options: "i" } }, // Case-insensitive search
+                  { email: { $regex: search, $options: "i" } },
+                ],
+              };
+        }else{
+            sortData={
+                [paramsData.filterField] : parseInt(paramsData.filterValue)
+            }
+        }
+        console.log(filterData)
+        const prospects = await Prospects.find({},"_id, prospect_name prospect_email prospect_location createdAt").sort(sortData);
         return res.status(200).json({ success: true, data: prospects });
       } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
