@@ -16,7 +16,6 @@ export default async function handler(req, res) {
             conversation_id:conversation_id,
             status:payload?.status,
             call_successful:payload?.analysis?.call_successful,
-            start_time_unix_secs: payload?.metadata?.start_time_unix_secs,
             call_duration_secs: payload?.metadata?.call_duration_secs,
             transcript: payload?.transcript,
             metadata: payload?.metadata,

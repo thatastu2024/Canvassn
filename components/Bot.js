@@ -5,6 +5,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import { faComment, faSignOut} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getUnixTime } from '../utils/dateUtil';
 export default function InitiateBotButton({agentDataProps}) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -90,11 +91,13 @@ function InitiatetBotForm({ closePopup,agentDataProps  }) {
       });
       console.log("Started conversation:", conversationId);
       let token=localStorage.getItem('token')
+      let start_time_unix_secs=getUnixTime()
       const response = await axios.post('/api/bot',{
         data:{
           agent_id:agentDataProps.agent_id,
           agent_name:agentDataProps.agent_name,
           conversation_id:conversationId,
+          start_time_unix_secs:start_time_unix_secs,
           status:'processing'
         },
         headers:{
