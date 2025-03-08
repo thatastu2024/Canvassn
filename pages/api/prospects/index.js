@@ -10,20 +10,22 @@ export default async function handler(req, res) {
       try {
         let paramsData=req.query
         let filterData={};
-        let sortData={};
+        let sortData={  };
         if(paramsData.filterField === "search"){
+            console.log("Inside")
             filterData = {
                 $or: [
-                  { name: { $regex: search, $options: "i" } }, // Case-insensitive search
-                  { email: { $regex: search, $options: "i" } },
+                  { name: { $regex: paramsData.filterValue, $options: "i" } }, // Case-insensitive search
+                  { email: { $regex: paramsData.filterValue, $options: "i" } },
                 ],
               };
+            console.log("filterData",filterData)
         }else{
             sortData={
                 [paramsData.filterField] : parseInt(paramsData.filterValue)
             }
         }
-        console.log(filterData)
+        // console.log(filterData)
         const prospects = await Prospects.find({},"_id, prospect_name prospect_email prospect_location createdAt").sort(sortData);
         return res.status(200).json({ success: true, data: prospects });
       } catch (error) {
@@ -34,7 +36,8 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
         await connectDB();
         try {
-            let requestBody=req?.body?.data
+            let requestBody=req?.body
+            console.log(req.body)
             const prospectSchema = Joi.object({
                 agent_id: Joi.string().required(),
                 prospect_name: Joi.string().required(),
@@ -53,6 +56,7 @@ export default async function handler(req, res) {
                 if(checkUserExists !== null && checkUserExists.hasOwnProperty('_id')){
                     const token = generateToken(checkUserExists)
                     return res.status(201).json({ success: true, message: "Prospect Authenticated Successfully",data:{
+                        prospect_id:checkUserExists._id,
                         prospectToken:token
                     }});
                 }else{
@@ -68,9 +72,11 @@ export default async function handler(req, res) {
                         status: 'active'
                     }
                     let data=await Prospects.create(finalResponse);
+                    console.log(data._id)
                     if(data) {
                         const token = generateToken(data)
                         return res.status(201).json({ success: true, message: "Prospect record captured successfully",data:{
+                            prospect_id:data._id,
                             prospectToken:token
                         }});
                     }else{

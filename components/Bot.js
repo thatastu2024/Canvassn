@@ -92,13 +92,24 @@ function InitiatetBotForm({ closePopup,agentDataProps  }) {
       console.log("Started conversation:", conversationId);
       let token=localStorage.getItem('token')
       let start_time_unix_secs=getUnixTime()
+      let prospectToken=localStorage.getItem(`prospect_token${agentDataProps.agent_id}`);
+      const prospectData = await axios.get('/api/prospects/details',{
+        params:{
+          token:prospectToken
+        },
+        headers:{
+            Authorization:'Bearer '+token,
+            "Content-Type": "application/json",
+        }
+      })
       const response = await axios.post('/api/bot',{
         data:{
           agent_id:agentDataProps.agent_id,
           agent_name:agentDataProps.agent_name,
           conversation_id:conversationId,
           start_time_unix_secs:start_time_unix_secs,
-          status:'processing'
+          status:'processing',
+          prospect_id:prospectData?.data?.data?._id
         },
         headers:{
             Authorization:'Bearer '+token,
@@ -134,16 +145,15 @@ function InitiatetBotForm({ closePopup,agentDataProps  }) {
     if (prospectData.name && prospectData.email) {
       let token=localStorage.getItem('token')
       const response = await axios.post('/api/prospects',{
-        data:{
-          agent_id:agentDataProps.agent_id,
-          prospect_name: prospectData.name,
-          prospect_email: prospectData.email,
-          prospect_location: "mumbai"
-        },
+        agent_id:agentDataProps.agent_id,
+        prospect_name: prospectData.name,
+        prospect_email: prospectData.email,
+        prospect_location: "mumbai"
+      },{
         headers:{
-            Authorization:'Bearer '+token,
-            "Content-Type": "application/json",
-        }
+          Authorization:'Bearer '+token,
+          "Content-Type": "application/json",
+      }
       })
       const prospectToken = response?.data?.data?.prospectToken;
       localStorage.setItem(`prospect_token${agentDataProps.agent_id}`, prospectToken);
