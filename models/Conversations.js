@@ -13,6 +13,9 @@ const ConversationsSchema = new mongoose.Schema(
     metadata: { type: mongoose.Schema.Types.Mixed, required: false },
     analysis: { type: mongoose.Schema.Types.Mixed, required: false },
     conversation_initiation_client_data: { type: mongoose.Schema.Types.Mixed, required: false },
+    prospect_id:{
+      type: mongoose.Schema.Types.ObjectId, ref: "Prospects", required: false
+    }
   },
   { timestamps: true }
 );

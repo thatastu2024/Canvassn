@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComments, faCommentDots, faClock, faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { faComments, faCommentDots, faClock, faRefresh, faEye } from "@fortawesome/free-solid-svg-icons";
 import {formatHumanReadableDate,formatTime} from '../utils/dateUtil'
+import ConversationDetail from './ConversationDetail'
 export default function ConversationsListComponent() {
   const [conversations,setConversations] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [conversationIdModel,setConversationIdModel] = useState()
   useEffect(()=>{
       const fetchData = async () => {
           try {
@@ -114,6 +116,9 @@ export default function ConversationsListComponent() {
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
             Re-process
             </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Action
+            </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -132,6 +137,10 @@ export default function ConversationsListComponent() {
                 <FontAwesomeIcon icon={faRefresh} />
                 :'success'
               }</td>
+            <td 
+            className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+            onClick={() => setIsDetailModalOpen(true)}
+            ><FontAwesomeIcon icon={faEye} onClick={e=>{setConversationIdModel(conversation._id)}} /></td>
           </tr>
         ))}
         </tbody>
@@ -156,6 +165,7 @@ export default function ConversationsListComponent() {
         </button> */}
       </div>
     </div>
+    <ConversationDetail isOpen={isDetailModalOpen} conversationDetailsId={conversationIdModel} onClose={() => setIsDetailModalOpen(false)}/>
     </>
   );
 }

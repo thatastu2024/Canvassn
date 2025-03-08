@@ -18,6 +18,9 @@ export default function ProspectList() {
         if(filterField === null && filterValue === null){
           filterField='createdAt',
           filterValue='-1'
+        }else if(filterField === 'search' && filterValue.toString().length === 0){
+          filterField='createdAt',
+          filterValue='-1'
         }
         let token=localStorage.getItem('token')
         const response=await axios.get('/api/prospects',{
@@ -55,7 +58,7 @@ export default function ProspectList() {
   return (
     <>
         <div className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Prospects</h2>
+          <h2 className="text-xl font-semibold mb-4">Leads</h2>
         </div>
         <div className="overflow-x-auto">
           <div className="flex justify-end mb-4">
