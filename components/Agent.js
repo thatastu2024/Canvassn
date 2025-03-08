@@ -64,9 +64,9 @@ export default function AgentListComponent() {
   return (
     <>
     <div>
-      <div className="grid grid-cols-2 gap-4 p-4 border">
+      <div className="bg-white grid grid-cols-2 gap-4 p-4 border">
         <div className="p-4 border-r">
-          <h2 className="text-lg font-bold mb-4">AI Agents</h2>
+          <h2 className="bg-white text-lg font-bold mb-4">AI Agents</h2>
           <hr />
           {agents.map((agent, index) => (
             <div
@@ -106,7 +106,7 @@ export default function AgentListComponent() {
             )
       }
     </div>
-    <ViewAgentComponent></ViewAgentComponent>
+    {/* <ViewAgentComponent></ViewAgentComponent> */}
     </>
   );
 }
