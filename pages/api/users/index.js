@@ -1,5 +1,5 @@
-import connectDB from "../../lib/mongodb";
-import AdminUser from "../../models/AdminUsers";
+import connectDB from "../../../lib/mongodb";
+import AdminUser from "../../../models/AdminUsers";
 import bcrypt from 'bcryptjs'
 export default async function handler(req, res) {
   await connectDB(); // Connect to MongoDB
@@ -21,8 +21,11 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
-      const users = await User.find();
-      return res.status(200).json(users);
+      const users = await AdminUser.find();
+      return res.status(200).json({
+        message:"Users fetched successfully",
+        data:users
+      });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
