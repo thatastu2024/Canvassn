@@ -3,6 +3,7 @@ import axios from 'axios';
 import { faEnvelope,faPlay,faPause,faArrowLeft,faArrowRight,faDownload} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {formatDateTime,formatTime} from '../utils/dateUtil'
+import WaveFormAudio from './WaveForm'
 
 const ConversationDetail = ({ isOpen, onClose, conversationDetailsId }) => {
     const [activeTab, setActiveTab] = useState("overview");
@@ -107,7 +108,7 @@ const ConversationDetail = ({ isOpen, onClose, conversationDetailsId }) => {
         </div>
         <div className="bg-white w-full flex flex-col">
             <div className="flex border-b">
-                {["overview", "transcription", "recording", "meta_data"].map(
+                {["overview", "messages", "recording", "meta_data"].map(
                 (tab) => (
                     <button
                     key={tab}
@@ -130,19 +131,15 @@ const ConversationDetail = ({ isOpen, onClose, conversationDetailsId }) => {
                       <h3 className="text-lg font-semibold">Summary</h3>
                       <p>{conversationDetail?.analysis?.transcript_summary}</p>
                     </div>
-                    <div className="bg-white-100 p-4 rounded-lg shadow">
-                      <h3 className="text-lg font-semibold">Call status</h3>
-                      <p>{conversationDetail?.analysis?.call_successful}</p>
-                    </div>
                 </div>
                 )}
-                {activeTab === "transcription" && (
+                {activeTab === "messages" && (
                   <div className="p-4 h-[400px] overflow-y-auto bg-white-100 rounded-lg">
-                    <h2 className="text-lg font-bold mb-2">Transcription Chat</h2>
+                    <h2 className="text-lg font-bold mb-2">Chat</h2>
                     <div className="flex flex-col space-y-3">
                       {conversationDetail.transcript.map((msg, index) => (
                         <div key={index} className={`flex items-start w-full ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                          {msg.role === "user" && (
+                          {msg.role === "user" && msg.message !== null && (
                             <div className="flex items-center space-x-2">
                               <div className="bg-blue-500 text-white p-3 rounded-lg max-w-[75%]">
                                 {msg.message}
@@ -150,7 +147,7 @@ const ConversationDetail = ({ isOpen, onClose, conversationDetailsId }) => {
                               <img src='/Men.webp' alt="User" className="w-8 h-8 rounded-full" />
                             </div>
                           )}
-                          {msg.role === "agent" && (
+                          {msg.role === "agent" && msg.message !== null && (
                             <div className="flex items-center space-x-2">
                               <img src='/Men.webp' alt="AI" className="w-8 h-8 rounded-full" />
                               <div className="bg-gray-300 text-black p-3 rounded-lg max-w-[75%]">
@@ -168,24 +165,7 @@ const ConversationDetail = ({ isOpen, onClose, conversationDetailsId }) => {
                   <h2 className="text-lg font-bold mb-3">Call Recording</h2>
             
                   {audioSrc ? (
-                    <div className="flex flex-col items-center">
-                      <audio ref={audioRef} src={audioSrc} className="w-full my-2" preload='none' />
-            
-                      <div className="flex space-x-4 mt-3">
-                        <button className="bg-gray-500 text-white px-4 py-2 rounded-lg" onClick={seekBackward}>
-                        <FontAwesomeIcon icon={faArrowLeft}/>
-                        </button>
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg" onClick={togglePlayPause}>
-                        {isPlaying ? <FontAwesomeIcon icon={faPause}/> : <FontAwesomeIcon icon={faPlay}/>}
-                        </button>
-                        <button className="bg-gray-500 text-white px-4 py-2 rounded-lg" onClick={seekForward}>
-                        <FontAwesomeIcon icon={faArrowRight}/>
-                        </button>
-                        <button className="bg-green-500 text-white px-4 py-2 rounded-lg" onClick={downloadAudio}>
-                        <FontAwesomeIcon icon={faDownload}/>
-                        </button>
-                      </div>
-                    </div>
+                    <WaveFormAudio historyId={conversationDetail.conversation_id}/>
                   ) : (
                     <p>Loading recording...</p>
                   )}
