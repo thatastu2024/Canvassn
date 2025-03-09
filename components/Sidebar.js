@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
-import { FaRobot, FaHistory, FaBook, FaPhone, FaCog } from "react-icons/fa";
+import { FaRobot, FaHistory, FaBook, FaPhone, FaUser , FaCog } from "react-icons/fa";
 import { useRouter } from "next/router";
 
 export default function Sidebar() {
@@ -40,7 +40,8 @@ export default function Sidebar() {
             { id:3, name: "Call History", icon: <FaHistory />, path: "/conversations" },
             { id:4, name: "Leads", icon: <FaHistory />, path: "/prospects" },
             { id:5, name: "Knowledge Base", icon: <FaBook />, path: "/knowledge-base" },
-            { id:6, name: "Settings", icon: <FaCog />, path: "/settings" },
+            { id:6, name: "Users", icon: <FaUser />, path: "/users" },
+            { id:7, name: "Settings", icon: <FaCog />, path: "/settings" },
           ].map((item)=>(
             <li key={item.id} className="py-2 px-4 hover:bg-gray-700">
             <Link className="flex items-center space-x-2" key={item.name} href={item.path}>

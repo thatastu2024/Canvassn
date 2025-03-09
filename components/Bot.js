@@ -164,7 +164,6 @@ function InitiatetBotForm({ closePopup,agentDataProps  }) {
   };
 
   const handleProspectLogout = async() =>{
-    console.log("clicked",`prospect_token${agentDataProps.agent_id}`)
     localStorage.removeItem(`prospect_token${agentDataProps.agent_id}`);
     setIsProspectAuthenticated(false);
   }
