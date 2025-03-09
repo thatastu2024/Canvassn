@@ -21,7 +21,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
-      <canvassn-chat-widget agent-id="y9VYoVeweQ2xyfNfAFPb"></canvassn-chat-widget> <script src="https://ai-voice-bot-mauve.vercel.app/canvassn-chat-widget.js" async></script>
+      {/* <canvassn-chat-widget agent-id="y9VYoVeweQ2xyfNfAFPb"></canvassn-chat-widget> <script src="https://ai-voice-bot-mauve.vercel.app/canvassn-chat-widget.js" async></script> */}
       {
         isAuthenticated ? 
           (
