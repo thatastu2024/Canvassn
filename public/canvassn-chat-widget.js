@@ -1,12 +1,22 @@
 class PublicScript {
   constructor() {
-      this.modal1 = null;
-      this.modal2 = null;
-      this.modal1Open = false;
-      this.modal2Open = false;
-      this.isLoggedIn = false;
-      this.loadFontAwesome();
-      this.init();
+    this.modal1 = null;
+    this.modal2 = null;
+    this.modal1Open = false;
+    this.modal2Open = false;
+    this.isLoggedIn = false;
+    this.loadFontAwesome();
+    this.init();
+    this.agentId=null
+    this.isConversationActive = false;
+    this.isMuted = false;
+    this.timerInterval = null;
+    this.startTime = null;
+    this.session = null;
+    this.conversation=null,
+    this.messageCount=0,
+    this.userData=[],
+    this.fetchUserDetail()
   }
 
   loadFontAwesome() {
@@ -16,6 +26,25 @@ class PublicScript {
       document.head.appendChild(faLink);
   }
 
+    loadElevenLabsSDK() {
+        return new Promise((resolve, reject) => {
+            if (this.elevenLabs) {
+                resolve(this.elevenLabs);
+                return;
+            }
+    
+            import("https://cdn.jsdelivr.net/npm/@11labs/client@latest/+esm")
+                .then((module) => {
+                    this.elevenLabs = module;
+                    resolve(this.elevenLabs);
+                })
+                .catch((error) => {
+                    console.error("❌ Failed to load ElevenLabs SDK", error);
+                    reject(error);
+                });
+        });
+    }
+
   init() {
       console.log("🔥 Public Script Loaded!");
       this.createButton();
@@ -23,180 +52,506 @@ class PublicScript {
       if (!localStorage.getItem("authToken")) {
           this.createModals();
       } else {
-          console.log("✅ User already logged in. Hiding login modal.");
+        console.log("✅ User already logged in. Hiding login modal.");
+        this.modal1 = this.createLoggedInModal();  // Load logged-in modal
+        document.body.appendChild(this.modal1);
       }
   }
 
   createButton() {
-      this.btn = document.createElement("button");
-      this.btn.innerHTML = '<i class="fa-solid fa-comments"></i> Open Modal';
-      Object.assign(this.btn.style, {
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          padding: "10px 15px",
-          background: "red",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          zIndex: "9999",
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "5px"
-      });
-      this.btn.addEventListener("click", () => this.toggleModal1());
-      document.body.appendChild(this.btn);
+    this.btn = document.createElement("button");
+    this.btn.innerHTML = '<i class="fa-solid fa-comment-dots"></i>';
+
+    Object.assign(this.btn.style, {
+        position: "fixed",
+        bottom: "12px",
+        right: "20px",
+        padding: "15px",
+        background: "#3A0CA3",
+        color: "white",
+        border: "none",
+        borderRadius: "50%",
+        cursor: "pointer",
+        zIndex: "9999",
+        fontSize: "28px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "60px",
+        height: "60px",
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+        transition: "all 0.3s ease-in-out"
+    });
+
+    this.btn.addEventListener("mouseover", () => {
+        this.btn.style.background = "#2A008F";
+    });
+
+    this.btn.addEventListener("mouseout", () => {
+        this.btn.style.background = "#3A0CA3";
+    });
+
+    this.btn.addEventListener("click", () => this.toggleModal1());
+    document.body.appendChild(this.btn);
   }
 
   createModals() {
       this.modal1 = this.createStyledModal("Canvassn-Eric", "Click Save to Continue", () => this.toggleModal1(), () => this.openModal2());
       document.body.appendChild(this.modal1);
   }
+ 
+    createLoggedInModal() {
+        const modal = document.createElement("div");
+        Object.assign(modal.style, {
+            position: "fixed",
+            bottom: "80px",
+            right: "20px",
+            width: "400px",
+            height: "350px",
+            background: "white",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+            borderRadius: "10px",
+            transition: "bottom 0.3s ease-in-out",
+            zIndex: "10000",
+            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
+        });
 
-  createStyledModal(title, content, closeAction, saveAction) {
-      const modal = document.createElement("div");
-      Object.assign(modal.style, {
-          position: "fixed",
-          bottom: "-400px",
-          right: "20px",
-          width: "400px",
-          height: "300px",
-          background: "white",
-          boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-          borderRadius: "10px",
-          transition: "bottom 0.3s ease-in-out",
-          zIndex: "10000",
-          padding: "20px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center"
-      });
-      
-      const header = document.createElement("div");
-      header.style.display = "flex";
-      header.style.justifyContent = "space-between";
-      header.style.width = "100%";
-      
-      const titleEl = document.createElement("strong");
-      titleEl.innerText = title;
-      header.appendChild(titleEl);
+        const header = document.createElement("div");
+        header.style.display = "flex";
+        header.style.justifyContent = "space-between";
+        header.style.width = "100%";
+        
+        const titleEl = document.createElement("strong");
+        titleEl.style.color="black"
+        titleEl.innerText = "Welcome! Canvassn-Eric";
+        header.appendChild(titleEl);
 
-      const closeBtn = document.createElement("button");
-      closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-      closeBtn.style.border = "none";
-      closeBtn.style.background = "transparent";
-      closeBtn.style.cursor = "pointer";
-      closeBtn.onclick = closeAction;
-      header.appendChild(closeBtn);
-      modal.appendChild(header);
+        const profileBlock = document.createElement("div");
+        profileBlock.innerHTML = '<i class="fa fa-user" aria-hidden="true"></i>'
+        Object.assign(profileBlock.style, {
+            width: "35px",
+            height: "35px",
+            borderRadius: "50%",
+            background: "black",
+            color: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontSize: "16px",
+            fontWeight: "bold",
+            cursor: "pointer",
+            position: "relative",
+            margin:"0px 0px 0px 80px"
+        });
 
-      const contentEl = document.createElement("p");
-      contentEl.innerText = content;
-      modal.appendChild(contentEl);
+        const dropdown = document.createElement("div");
+        Object.assign(dropdown.style, {
+            position: "relative",
+            top: "40px",
+            right: "0",
+            background: "white",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            borderRadius: "5px",
+            display: "none",
+            flexDirection: "column",
+            zIndex: "10001"
+        });
 
-      if (saveAction) {
-          const saveButton = document.createElement("button");
-          saveButton.innerHTML = '<i class="fa-solid fa-save"></i> Save';
-          Object.assign(saveButton.style, {
-              background: "green",
-              color: "white",
-              border: "none",
-              padding: "10px",
-              marginTop: "10px",
-              cursor: "pointer",
-              borderRadius: "5px"
-          });
-          saveButton.onclick = saveAction;
-          modal.appendChild(saveButton);
-      }
+        const showProfile = document.createElement("button");
+        showProfile.innerText = "Profile";
+        Object.assign(showProfile.style, {
+            padding: "10px",
+            border: "none",
+            background: "transparent",
+            color:'black',
+            cursor: "pointer",
+            textAlign: "left"
+        });
 
-      return modal;
-  }
+        const logout = document.createElement("button");
+        logout.innerText = "Logout";
+        Object.assign(logout.style, {
+            padding: "10px",
+            border: "none",
+            background: "transparent",
+            color:'black',
+            cursor: "pointer",
+            textAlign: "left"
+        });
 
-  openModal2() {
-      this.modal1.innerHTML = "";
-      this.modal1.appendChild(this.createLoginForm());
-  }
+        logout.onclick = () => this.logoutUser();
+        dropdown.appendChild(showProfile);
+        dropdown.appendChild(logout);
 
-  createLoginForm() {
-    const formContainer = document.createElement("div");
-    formContainer.innerHTML = `
-        <strong class="text-lg font-semibold mb-4 block">Login Required</strong>
-        <form id="loginForm" class="w-full flex flex-col space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Name</label>
-                <input type="text" placeholder="Enter your name" 
-                    class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
+        profileBlock.onclick = () => {
+            dropdown.style.display = dropdown.style.display === "none" ? "flex" : "none";
+        };
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Email</label>
-                <input type="email" placeholder="Enter your email" 
-                    class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
+        profileBlock.appendChild(dropdown);
 
-            <button type="submit" 
-                class="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
-                <i class="fa-solid fa-sign-in mr-2"></i> Login
-            </button>
-        </form>
-    `;
+        header.appendChild(profileBlock);
+
+        const closeBtn = document.createElement("button");
+        closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        closeBtn.style.border = "none";
+        closeBtn.style.background = "transparent";
+        closeBtn.style.color = "black";
+        closeBtn.style.cursor = "pointer";
+        closeBtn.onclick = () => this.toggleModal1();
+        header.appendChild(closeBtn);
+        modal.appendChild(header);
+
+        const img = document.createElement("img");
+        img.style.color="black"
+        img.src = "Men.webp"; 
+        img.alt = "User Avatar";
+        Object.assign(img.style, {
+            width: "100px",
+            height: "100px",
+            borderRadius: "50%",
+            margin: "30px 0px 10px"
+        });
+        modal.appendChild(img);
+
+        // Timer Display
+        this.timerDisplay = document.createElement("div");
+        this.timerDisplay.innerText = "00:00";
+        this.timerDisplay.style.color = "black";
+        this.timerDisplay.style.fontSize = "20px";
+        this.timerDisplay.style.fontWeight = "bold";
+        this.timerDisplay.style.marginBottom = "10px";
+        modal.appendChild(this.timerDisplay);
+
+
+        // Mute/Unmute Button
+        this.muteIcon = document.createElement("i");
+        this.isMuted = false; // Default state
+        this.updateMuteIcon(); // Initialize mute/unmute UI
+        this.muteIcon.style.fontSize = "20px";
+        this.muteIcon.style.cursor = "pointer";
+        this.muteIcon.style.margin = "0px 0px 15px 0px";
+        this.muteIcon.onclick = () => this.toggleMute();
+        modal.appendChild(this.muteIcon);
+
+        this.conversationButton = document.createElement("button");
+        this.updateConversationButton(); // Initialize button state
+        modal.appendChild(this.conversationButton);
+
+        return modal;
+   }
+
+    updateConversationButton() {
+        if (!this.conversationButton) return;
+
+        if (this.isConversationActive) {
+            this.conversationButton.innerHTML = '<i class="fa-solid fa-microphone-slash"></i> End Conversation';
+            this.conversationButton.style.background = "red";
+            this.conversationButton.onclick = () => this.handleEndConversation();
+        } else {
+            this.conversationButton.innerHTML = '<i class="fa-solid fa-microphone"></i> Start Conversation';
+            this.conversationButton.style.background = "black";
+            this.conversationButton.onclick = () => this.handleStartConversation();
+        }
+
+        Object.assign(this.conversationButton.style, {
+            color: "white",
+            border: "none",
+            padding: "10px",
+            cursor: "pointer",
+            borderRadius: "5px",
+            width: "80%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px"
+        });
+    }
+
+    updateMuteIcon() {
+        if (!this.muteIcon) return;
+        this.muteIcon.className = this.isMuted ? "fa-solid fa-volume-mute" : "fa-solid fa-volume-up";
+        this.muteIcon.style.color = this.isMuted ? "gray" : "black";
+    }
+
+    toggleMute() {
+        this.isMuted = !this.isMuted;
+        console.log(this.isMuted ? "🔇 Muted" : "🔊 Unmuted");
+        this.updateMuteIcon();
+    }
+
+    async handleStartConversation() {
+        console.log("🎤 Conversation Started!");
+        this.isConversationActive = true;
+        this.updateConversationButton();
+        this.startTime = Date.now();
+        this.timerInterval = setInterval(() => {
+            const elapsedTime = Date.now() - this.startTime;
+            this.timerDisplay.innerText = this.formatTime(elapsedTime);
+        }, 1000);
+        const elevenLabsModule = await this.loadElevenLabsSDK();
+        const ElevenLabsClient = elevenLabsModule.Conversation;
+        this.getAgentId()
+        this.conversation = await ElevenLabsClient.startSession({
+            agentId: this.agentId,
+            onConnect: () => {
+                console.log("Connected to ElevenLabs");
+            },
+            onDisconnect: () => {
+                console.log("Disconnected from ElevenLabs");
+            },
+            onMessage: (message) => {
+                console.log("Received message:", message);
+                this.messageCount = this.messageCount + 1
+                if(message.source === "ai"){
+                    this.messageCount
+                console.log("ai",message.message)
+                }
+                if(message.source === "user"){
+                console.log("user",message.message)
+                }
+            },
+            onError: (error) => {
+                console.error("Error:", error);
+            },
+            onModeChange: (mode) =>{
+                console.error("mode:", mode);
+            },
+            onStatusChange:(status) =>{
+                console.error("status:", status);
+            }
+        });
+        console.log("Conversation Id",this.conversation.getId())
+        console.log(this.getUnixTime())
+        fetch("http://localhost:3000/api/bot", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ 
+                data:{
+                    agent_id:this.agentId,
+                    conversation_id:this.conversation.getId(),
+                    start_time_unix_secs:this.getUnixTime(),
+                    status:'processing',
+                    prospect_id:this.userData[0]._id 
+                }
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+        })
+        .catch(error => {
+            console.error("Login Error:", error);
+            alert("Something went wrong. Please try again.");
+        });
+        console.log("🟢 ElevenLabs session started.");
+    }
+
+    async handleEndConversation() {
+        console.log("🔇 Conversation Ended!");
+        this.isConversationActive = false;
+        this.updateConversationButton();
+
+        clearInterval(this.timerInterval);
+        const elapsedTime = Date.now() - this.startTime;
+        console.log(`🕒 Total Conversation Time: ${this.formatTime(elapsedTime)}`);
+        await this.conversation.endSession();
+        console.log(this.messageCount)
+    }
+
+    formatTime(ms) {
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+        const seconds = String(totalSeconds % 60).padStart(2, "0");
+        return `${minutes}:${seconds}`;
+    }
+
+    getUnixTime = () => Math.floor(Date.now() / 1000);
+
+    createStyledModal(title, content, closeAction, saveAction) {
+        const modal = document.createElement("div");
+        Object.assign(modal.style, {
+            position: "fixed",
+            bottom: "-400px",
+            right: "20px",
+            width: "400px",
+            height: "300px",
+            background: "white",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+            borderRadius: "10px",
+            transition: "bottom 0.3s ease-in-out",
+            zIndex: "10000",
+            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
+        });
+        
+        const header = document.createElement("div");
+        header.style.display = "flex";
+        header.style.justifyContent = "space-between";
+        header.style.width = "100%";
+        
+        const titleEl = document.createElement("strong");
+        titleEl.innerText = title;
+        header.appendChild(titleEl);
+
+        const closeBtn = document.createElement("button");
+        closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        closeBtn.style.border = "none";
+        closeBtn.style.background = "transparent";
+        closeBtn.style.cursor = "pointer";
+        closeBtn.onclick = closeAction;
+        header.appendChild(closeBtn);
+        modal.appendChild(header);
+
+        const contentEl = document.createElement("p");
+        contentEl.innerText = content;
+        modal.appendChild(contentEl);
+
+        if (saveAction) {
+            const saveButton = document.createElement("button");
+            saveButton.innerHTML = '<i class="fa-solid fa-save"></i> Save';
+            Object.assign(saveButton.style, {
+                background: "green",
+                color: "white",
+                border: "none",
+                padding: "10px",
+                marginTop: "10px",
+                cursor: "pointer",
+                borderRadius: "5px"
+            });
+            saveButton.onclick = saveAction;
+            modal.appendChild(saveButton);
+        }
+
+        return modal;
+    }
+
+    openModal2() {
+        this.modal1.innerHTML = "";
+        this.modal1.appendChild(this.createLoginForm());
+    }
+
+    createLoginForm() {
+        const formContainer = document.createElement("div");
+        formContainer.innerHTML = `
+            <strong class="text-lg text-black font-semibold mb-4 block">Login Required</strong>
+            <form id="loginForm" class="w-full flex flex-col space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" placeholder="Enter your name" 
+                        class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm text-black">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" placeholder="Enter your email" 
+                        class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm text-black">
+                </div>
+
+                <button type="submit" 
+                    class="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
+                    <i class="fa-solid fa-sign-in mr-2"></i> Login
+                </button>
+            </form>
+        `;
+        
+        formContainer.querySelector("#loginForm").onsubmit = (e) => this.handleLogin(e);
+        return formContainer;
+    }
+
+    getAgentId(){
+        const scripts = document.getElementsByTagName("canvassn-chat-widget");
+        let tempAId
+        for(let script of scripts){
+            this.agentId=script.getAttribute("agent-id")
+            tempAId=script.getAttribute("agent-id")
+        }   
+        return tempAId
+    }
+
+    handleLogin(e) {
+        e.preventDefault();
+        this.getAgentId()
+        const name = e.target.querySelector('input[type="text"]').value.trim();
+        const email = e.target.querySelector('input[type="email"]').value.trim();
+        if (!name || !email) {
+            alert("Please enter both name and email.");
+            return;
+        }
+        fetch("http://localhost:3000/api/prospects", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ 
+                agent_id:this.agentId,
+                prospect_name: name,
+                prospect_email: email,
+                prospect_location: "mumbai"
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            if (data.data.prospectToken) {
+                localStorage.setItem("authToken", data.data.prospectToken);
+                alert("Login successful!");
     
-    formContainer.querySelector("#loginForm").onsubmit = (e) => this.handleLogin(e);
-    return formContainer;
-}
+                this.modal1.innerHTML = "";
+                this.modal1.appendChild(this.createLoggedInModal());
+            } else {
+                alert("Login failed. Please try again.");
+            }
+        })
+        .catch(error => {
+            console.error("Login Error:", error);
+            alert("Something went wrong. Please try again.");
+        });
+    }
+  
+    logoutUser() {
+        localStorage.removeItem("authToken");
+        alert("You have logged out!");
+        location.reload(); // Refresh to reset state
+    }
 
+    toggleModal1() {
+        if (!this.modal1) return;
+        this.modal1.style.bottom = this.modal1Open ? "-400px" : "80px";
+        this.modal1Open = !this.modal1Open;
+    }
 
-  handleLogin(e) {
-      e.preventDefault();
-  
-      const name = e.target.querySelector('input[type="text"]').value.trim();
-      const email = e.target.querySelector('input[type="email"]').value.trim();
-  
-      if (!name || !email) {
-          alert("Please enter both name and email.");
-          return;
-      }
-  
-      // API call to authenticate
-      fetch("https://ai-voice-bot-mauve.vercel.app/api/prospects", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name, email }),
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.token) {
-              localStorage.setItem("authToken", data.token);
-              alert("Login successful!");
-  
-              // Hide modal 1 after login
-              this.modal1.innerHTML = "";
-              this.modal1.appendChild(this.createStyledModal("Canvassn-Eric", "You are now logged in.", () => this.toggleModal1(), null));
-          } else {
-              alert("Login failed. Please try again.");
-          }
-      })
-      .catch(error => {
-          console.error("Login Error:", error);
-          alert("Something went wrong. Please try again.");
-      });
-  }
-  
-  logoutUser() {
-      localStorage.removeItem("authToken");
-      alert("You have logged out!");
-      location.reload(); // Refresh to reset state
-  }
+    fetchUserDetail(){
+        let authToken=localStorage.getItem('authToken')
+        if (!authToken) {
+            console.error("❌ No auth token found. User might not be logged in.");
+            return;
+        }
+    
+        fetch(`http://localhost:3000/api/prospects/details?token=${authToken}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${authToken}`,
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("✅ User Details:", data);
+            this.userData.push(data.data)
+        })
+        .catch(error => {
+            console.error("❌ Error fetching user details:", error);
+        });
+    }
+ 
 
-  toggleModal1() {
-      if (!this.modal1) return;
-      this.modal1.style.bottom = this.modal1Open ? "-400px" : "80px";
-      this.modal1Open = !this.modal1Open;
-  }
 }
 
 new PublicScript();
