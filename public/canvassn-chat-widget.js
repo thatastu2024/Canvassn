@@ -16,7 +16,8 @@ class PublicScript {
     this.conversation=null,
     this.messageCount=0,
     this.userData=[],
-    this.fetchUserDetail()
+    this.fetchUserDetail(),
+    this.conversationId=null;
   }
 
   loadFontAwesome() {
@@ -58,47 +59,47 @@ class PublicScript {
       }
   }
 
-  createButton() {
-    this.btn = document.createElement("button");
-    this.btn.innerHTML = '<i class="fa-solid fa-comment-dots"></i>';
+    createButton() {
+        this.btn = document.createElement("button");
+        this.btn.innerHTML = '<i class="fa-solid fa-comment-dots"></i>';
 
-    Object.assign(this.btn.style, {
-        position: "fixed",
-        bottom: "12px",
-        right: "20px",
-        padding: "15px",
-        background: "#3A0CA3",
-        color: "white",
-        border: "none",
-        borderRadius: "50%",
-        cursor: "pointer",
-        zIndex: "9999",
-        fontSize: "28px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "60px",
-        height: "60px",
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
-        transition: "all 0.3s ease-in-out"
-    });
+        Object.assign(this.btn.style, {
+            position: "fixed",
+            bottom: "12px",
+            right: "20px",
+            padding: "15px",
+            background: "#3A0CA3",
+            color: "white",
+            border: "none",
+            borderRadius: "50%",
+            cursor: "pointer",
+            zIndex: "9999",
+            fontSize: "28px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "60px",
+            height: "60px",
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+            transition: "all 0.3s ease-in-out"
+        });
 
-    this.btn.addEventListener("mouseover", () => {
-        this.btn.style.background = "#2A008F";
-    });
+        this.btn.addEventListener("mouseover", () => {
+            this.btn.style.background = "#2A008F";
+        });
 
-    this.btn.addEventListener("mouseout", () => {
-        this.btn.style.background = "#3A0CA3";
-    });
+        this.btn.addEventListener("mouseout", () => {
+            this.btn.style.background = "#3A0CA3";
+        });
 
-    this.btn.addEventListener("click", () => this.toggleModal1());
-    document.body.appendChild(this.btn);
-  }
+        this.btn.addEventListener("click", () => this.toggleModal1());
+        document.body.appendChild(this.btn);
+    }
 
-  createModals() {
-      this.modal1 = this.createStyledModal("Canvassn-Eric", "Click Save to Continue", () => this.toggleModal1(), () => this.openModal2());
-      document.body.appendChild(this.modal1);
-  }
+    createModals() {
+        this.modal1 = this.createStyledModal("Canvassn-Eric", "Click Save to Continue", () => this.toggleModal1(), () => this.openModal2());
+        document.body.appendChild(this.modal1);
+    }
  
     createLoggedInModal() {
         const modal = document.createElement("div");
@@ -323,8 +324,7 @@ class PublicScript {
                 console.error("status:", status);
             }
         });
-        console.log("Conversation Id",this.conversation.getId())
-        console.log(this.getUnixTime())
+        this.conversationId=this.conversation.getId()
         fetch("http://localhost:3000/api/bot", {
             method: "POST",
             headers: {
@@ -360,6 +360,26 @@ class PublicScript {
         const elapsedTime = Date.now() - this.startTime;
         console.log(`🕒 Total Conversation Time: ${this.formatTime(elapsedTime)}`);
         await this.conversation.endSession();
+
+        fetch("http://localhost:3000/api/bot/"+this.conversationId, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ 
+                call_duration_secs:elapsedTime,
+                total_message_exchange:this.messageCount
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+        })
+        .catch(error => {
+            console.error("Login Error:", error);
+            alert("Something went wrong. Please try again.");
+        });
+
         console.log(this.messageCount)
     }
 

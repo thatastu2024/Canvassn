@@ -1,5 +1,6 @@
 import Conversation from "../../../models/Conversations";
 import connectDB from "../../../lib/mongodb";
+import ChatAgents from "../../../models/ChatAgents";
 export default async function handler(req, res) {
 
     if (req.method === "GET") {
@@ -18,7 +19,11 @@ export default async function handler(req, res) {
             let requestBody=req.body
             if(requestBody.data.hasOwnProperty('conversation_id')){
                 let finalResponse=requestBody.data
-                console.log(finalResponse)
+                const agentDetail = await ChatAgents.findOne({},"_id name").lean().exec()
+                finalResponse={
+                  ...finalResponse,
+                  agent_name:agentDetail.name
+                }
                 // const result = await Conversation.updateMany({}, { $set: { prospect_id: "67c6e37f295ef49f55e17a98" } });
                 await Conversation.create(finalResponse);
                 return res.status(201).json({ success: true, message: "Conversation record inserted successfully" });

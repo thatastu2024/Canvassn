@@ -35,4 +35,22 @@ export default async function handler(req, res) {
     } else {
       res.status(405).json({ message: "Method Not Allowed" });
     }
+
+    if(req.method === "PUT"){
+      try{
+        let updateFields=req?.body
+        const {conversation_id} = req?.query;
+        const updatedConversation = await Conversation.findOneAndUpdate(
+          { conversation_id: conversation_id }, 
+          { $set: updateFields },
+          { new: true } 
+        );
+        return res.status(200).json({message:"Conversation updated successfully"});
+      }catch(error){
+        console.log(error)
+        return res.status(500).json({ message: "Error updating agent detail", error });
+      }
+    }else{
+      res.status(405).json({ message: "Method Not Allowed" });
+    }
 }
