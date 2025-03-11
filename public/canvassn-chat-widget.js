@@ -325,7 +325,7 @@ class PublicScript {
             }
         });
         this.conversationId=this.conversation.getId()
-        fetch("http://localhost:3000/api/bot", {
+        fetch("https://ai-voice-bot-mauve.vercel.app/api/bot", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -361,7 +361,7 @@ class PublicScript {
         console.log(`🕒 Total Conversation Time: ${this.formatTime(elapsedTime)}`);
         await this.conversation.endSession();
 
-        fetch("http://localhost:3000/api/bot/"+this.conversationId, {
+        fetch("https://ai-voice-bot-mauve.vercel.app/api/bot/"+this.conversationId, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -504,7 +504,7 @@ class PublicScript {
             alert("Please enter both name and email.");
             return;
         }
-        fetch("http://localhost:3000/api/prospects", {
+        fetch("https://ai-voice-bot-mauve.vercel.app/api/prospects", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -554,7 +554,7 @@ class PublicScript {
             return;
         }
     
-        fetch(`http://localhost:3000/api/prospects/details?token=${authToken}`, {
+        fetch(`https://ai-voice-bot-mauve.vercel.app/api/prospects/details?token=${authToken}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${authToken}`,
