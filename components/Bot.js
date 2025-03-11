@@ -78,7 +78,6 @@ function InitiatetBotForm({ closePopup,agentDataProps  }) {
     requestMicPermission();
   }, []);
 
-  const handleOpen = () => setIsOpen(true);
 
   const handleChange = (e) => {
     setProspectData({ ...prospectData, [e.target.name]: e.target.value });
