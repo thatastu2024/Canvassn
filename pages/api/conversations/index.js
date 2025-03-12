@@ -1,7 +1,7 @@
 import connectDB from "../../../lib/mongodb";
 import ChatAgent from "../../../models/ChatAgents";
-import axios from "axios";
-export default async function handler(req, res) {
+import authMiddleware from "../../../middleware/authMiddleware";
+async function handler(req, res) {
 
     if (req.method === "GET") {
         try {
@@ -65,3 +65,4 @@ export default async function handler(req, res) {
     
       return res.status(405).json({ success: false, error: "Method Not Allowed" });
 }
+

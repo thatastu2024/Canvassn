@@ -1,7 +1,8 @@
 import connectDB from "../../../lib/mongodb";
 import AdminUser from "../../../models/AdminUsers";
 import bcrypt from 'bcryptjs'
-export default async function handler(req, res) {
+import authMiddleware from "../../../middleware/authMiddleware";
+async function handler(req, res) {
   await connectDB(); // Connect to MongoDB
 
   if (req.method === "POST") {
@@ -38,3 +39,5 @@ async function bcryptPassword(password){
     const salt = await bcrypt.genSalt(10);
     return await bcrypt.hash(password, salt);
 }
+
+export default authMiddleware(handler)

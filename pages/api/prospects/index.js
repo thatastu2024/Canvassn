@@ -3,6 +3,7 @@ import connectDB from "../../../lib/mongodb";
 import Joi from "joi";
 import ChatAgents from "../../../models/ChatAgents";
 import { generateToken } from "../../../utils/jwt";
+import authMiddleware from "../../../middleware/authMiddleware";
 export default async function handler(req, res) {
 
     if (req.method === "GET") {
@@ -25,7 +26,6 @@ export default async function handler(req, res) {
                 [paramsData.filterField] : parseInt(paramsData.filterValue)
             }
         }
-        // console.log(filterData)
         const prospects = await Prospects.find({},"_id, prospect_name prospect_email prospect_location createdAt").sort(sortData);
         return res.status(200).json({ success: true, data: prospects });
       } catch (error) {
@@ -37,7 +37,6 @@ export default async function handler(req, res) {
         await connectDB();
         try {
             let requestBody=req?.body
-            console.log(req.body)
             const prospectSchema = Joi.object({
                 agent_id: Joi.string().required(),
                 prospect_name: Joi.string().required(),
@@ -92,3 +91,5 @@ export default async function handler(req, res) {
     
       return res.status(405).json({ success: false, error: "Method Not Allowed" });
 }
+
+// authMiddleware(handler)
