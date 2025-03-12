@@ -4,11 +4,11 @@ import Layout from "../components/Layout";
 import LineChart from "../components/DashboardLineChart";
 
 const Dashboard = () => {
-  useEffect(() => {
-    axios.get("/api/auth/me", { withCredentials: true })
-      .then((res) => console.log(res.data))
-      .catch((err) => console.error(err));
-  }, []);
+  // useEffect(() => {
+  //   axios.get("/api/auth/me", { withCredentials: true })
+  //     .then((res) => console.log(res.data))
+  //     .catch((err) => console.error(err));
+  // }, []);
 
   return (
     <div className="p-4">

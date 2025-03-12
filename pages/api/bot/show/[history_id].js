@@ -1,6 +1,7 @@
 import Conversation from "../../../../models/Conversations";
 import Prospects from "../../../../models/Prospects";
 import connectDB from "../../../../lib/mongodb";
+import authMiddleware from "../../../../middleware/authMiddleware";
 
 const fetchProspectData = async (prospectId)=>{
   try{
@@ -12,7 +13,7 @@ const fetchProspectData = async (prospectId)=>{
   }
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   await connectDB();
     if (req.method === "GET") {
       try {
@@ -41,3 +42,5 @@ export default async function handler(req, res) {
       res.status(405).json({ message: "Method Not Allowed" });
     }
 }
+
+export default authMiddleware(handler)

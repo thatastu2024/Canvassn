@@ -1,7 +1,8 @@
 import Prospects from "../../../../models/Prospects";
 import connectDB from "../../../../lib/mongodb";
+import authMiddleware from "../../../../middleware/authMiddleware";
 import jwt from "jsonwebtoken";
-export default async function handler(req, res) {
+async function handler(req, res) {
 
     if (req.method === "GET") {
       await connectDB();
@@ -20,3 +21,5 @@ export default async function handler(req, res) {
     
     return res.status(405).json({ success: false, error: "Method Not Allowed" });
 }
+
+export default authMiddleware(handler)

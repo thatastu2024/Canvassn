@@ -97,7 +97,7 @@ class PublicScript {
     }
 
     createModals() {
-        this.modal1 = this.createStyledModal("Canvassn-Eric", "Click Save to Continue", () => this.toggleModal1(), () => this.openModal2());
+        this.modal1 = this.createStyledModal("Ask Anythings", () => this.toggleModal1(), () => this.openModal2());
         document.body.appendChild(this.modal1);
     }
  
@@ -127,11 +127,11 @@ class PublicScript {
         
         const titleEl = document.createElement("strong");
         titleEl.style.color="black"
-        titleEl.innerText = "Welcome! Canvassn-Eric";
+        titleEl.innerText = "Ask Anything";
         header.appendChild(titleEl);
 
         const profileBlock = document.createElement("div");
-        profileBlock.innerHTML = '<i class="fa fa-user" aria-hidden="true"></i>'
+        profileBlock.innerHTML = `<i class="fa fa-user" aria-hidden="true"></i>`
         Object.assign(profileBlock.style, {
             width: "35px",
             height: "35px",
@@ -145,7 +145,7 @@ class PublicScript {
             fontWeight: "bold",
             cursor: "pointer",
             position: "relative",
-            margin:"0px 0px 0px 80px"
+            margin:"0px 0px 0px 160px"
         });
 
         const dropdown = document.createElement("div");
@@ -161,16 +161,16 @@ class PublicScript {
             zIndex: "10001"
         });
 
-        const showProfile = document.createElement("button");
-        showProfile.innerText = "Profile";
-        Object.assign(showProfile.style, {
-            padding: "10px",
-            border: "none",
-            background: "transparent",
-            color:'black',
-            cursor: "pointer",
-            textAlign: "left"
-        });
+        // const showProfile = document.createElement("button");
+        // showProfile.innerText = "Profile";
+        // Object.assign(showProfile.style, {
+        //     padding: "10px",
+        //     border: "none",
+        //     background: "transparent",
+        //     color:'black',
+        //     cursor: "pointer",
+        //     textAlign: "left"
+        // });
 
         const logout = document.createElement("button");
         logout.innerText = "Logout";
@@ -184,7 +184,7 @@ class PublicScript {
         });
 
         logout.onclick = () => this.logoutUser();
-        dropdown.appendChild(showProfile);
+        // dropdown.appendChild(showProfile);
         dropdown.appendChild(logout);
 
         profileBlock.onclick = () => {
@@ -227,10 +227,9 @@ class PublicScript {
         modal.appendChild(this.timerDisplay);
 
 
-        // Mute/Unmute Button
         this.muteIcon = document.createElement("i");
-        this.isMuted = false; // Default state
-        this.updateMuteIcon(); // Initialize mute/unmute UI
+        this.isMuted = false;
+        this.updateMuteIcon();
         this.muteIcon.style.fontSize = "20px";
         this.muteIcon.style.cursor = "pointer";
         this.muteIcon.style.margin = "0px 0px 15px 0px";
@@ -238,7 +237,7 @@ class PublicScript {
         modal.appendChild(this.muteIcon);
 
         this.conversationButton = document.createElement("button");
-        this.updateConversationButton(); // Initialize button state
+        this.updateConversationButton();
         modal.appendChild(this.conversationButton);
 
         return modal;
@@ -324,11 +323,14 @@ class PublicScript {
                 console.error("status:", status);
             }
         });
+        let userData=await this.fetchUserDetail()  
+        let authToken=localStorage.getItem('authToken')
         this.conversationId=this.conversation.getId()
         fetch("https://ai-voice-bot-mauve.vercel.app/api/bot", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authToken}`,
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({ 
                 data:{
@@ -336,7 +338,7 @@ class PublicScript {
                     conversation_id:this.conversation.getId(),
                     start_time_unix_secs:this.getUnixTime(),
                     status:'processing',
-                    prospect_id:this.userData[0]._id 
+                    prospect_id:userData._id 
                 }
             }),
         })
@@ -352,19 +354,18 @@ class PublicScript {
     }
 
     async handleEndConversation() {
-        console.log("🔇 Conversation Ended!");
         this.isConversationActive = false;
         this.updateConversationButton();
 
         clearInterval(this.timerInterval);
         const elapsedTime = Date.now() - this.startTime;
-        console.log(`🕒 Total Conversation Time: ${this.formatTime(elapsedTime)}`);
         await this.conversation.endSession();
-
+        let authToken=localStorage.getItem('authToken')
         fetch("https://ai-voice-bot-mauve.vercel.app/api/bot/"+this.conversationId, {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authToken}`,
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({ 
                 call_duration_secs:elapsedTime,
@@ -379,8 +380,6 @@ class PublicScript {
             console.error("Login Error:", error);
             alert("Something went wrong. Please try again.");
         });
-
-        console.log(this.messageCount)
     }
 
     formatTime(ms) {
@@ -392,14 +391,14 @@ class PublicScript {
 
     getUnixTime = () => Math.floor(Date.now() / 1000);
 
-    createStyledModal(title, content, closeAction, saveAction) {
+    createStyledModal(title, closeAction, saveAction) {
         const modal = document.createElement("div");
         Object.assign(modal.style, {
             position: "fixed",
             bottom: "-400px",
             right: "20px",
             width: "400px",
-            height: "300px",
+            height: "325px",
             background: "white",
             boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
             borderRadius: "10px",
@@ -429,21 +428,50 @@ class PublicScript {
         header.appendChild(closeBtn);
         modal.appendChild(header);
 
-        const contentEl = document.createElement("p");
-        contentEl.innerText = content;
-        modal.appendChild(contentEl);
+
+        const img = document.createElement("img");
+        img.style.color="black"
+        img.src = "Men.webp"; 
+        img.alt = "User Avatar";
+        Object.assign(img.style, {
+            width: "100px",
+            height: "100px",
+            borderRadius: "50%",
+            margin: "30px 0px 10px"
+        });
+        modal.appendChild(img);
+
+        // Timer Display
+        this.timerDisplay = document.createElement("div");
+        this.timerDisplay.innerText = "00:00";
+        this.timerDisplay.style.color = "black";
+        this.timerDisplay.style.fontSize = "20px";
+        this.timerDisplay.style.fontWeight = "bold";
+        this.timerDisplay.style.marginBottom = "10px";
+        modal.appendChild(this.timerDisplay);
+
+
+        // Mute/Unmute Button
+        this.muteIcon = document.createElement("i");
+        this.isMuted = false; // Default state
+        this.updateMuteIcon(); // Initialize mute/unmute UI
+        this.muteIcon.style.fontSize = "20px";
+        this.muteIcon.style.cursor = "pointer";
+        this.muteIcon.style.margin = "0px 0px 15px 0px";
+        this.muteIcon.onclick = () => this.toggleMute();
+        modal.appendChild(this.muteIcon);
 
         if (saveAction) {
             const saveButton = document.createElement("button");
-            saveButton.innerHTML = '<i class="fa-solid fa-save"></i> Save';
+            saveButton.innerHTML = '<i class="fa-solid fa-microphone"></i> Start Conversation';
             Object.assign(saveButton.style, {
-                background: "green",
+                background: "black",
                 color: "white",
                 border: "none",
                 padding: "10px",
-                marginTop: "10px",
                 cursor: "pointer",
-                borderRadius: "5px"
+                borderRadius: "5px",
+                width: "80%",
             });
             saveButton.onclick = saveAction;
             modal.appendChild(saveButton);
@@ -497,6 +525,7 @@ class PublicScript {
 
     handleLogin(e) {
         e.preventDefault();
+        let authToken=localStorage.getItem('authToken')
         this.getAgentId()
         const name = e.target.querySelector('input[type="text"]').value.trim();
         const email = e.target.querySelector('input[type="email"]').value.trim();
@@ -507,7 +536,8 @@ class PublicScript {
         fetch("https://ai-voice-bot-mauve.vercel.app/api/prospects", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authToken}`,
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({ 
                 agent_id:this.agentId,
@@ -547,28 +577,29 @@ class PublicScript {
         this.modal1Open = !this.modal1Open;
     }
 
-    fetchUserDetail(){
+    async fetchUserDetail(){
         let authToken=localStorage.getItem('authToken')
         if (!authToken) {
             console.error("❌ No auth token found. User might not be logged in.");
             return;
         }
-    
-        fetch(`https://ai-voice-bot-mauve.vercel.app/api/prospects/details?token=${authToken}`, {
+        const response =await fetch(`https://ai-voice-bot-mauve.vercel.app/api/prospects/details?token=${authToken}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${authToken}`,
                 "Content-Type": "application/json"
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log("✅ User Details:", data);
-            this.userData.push(data.data)
-        })
-        .catch(error => {
-            console.error("❌ Error fetching user details:", error);
-        });
+
+        const data=await response.json()
+        if(data?.data?.expired === true){
+            console.log("here")
+            localStorage.removeItem('authToken')
+            location.reload();
+        }else{
+            console.log("here 2")
+            return data.data
+        }
     }
  
 

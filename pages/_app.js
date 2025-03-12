@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import Login from './login'
-
+import axios from 'axios';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -14,8 +14,7 @@ function MyApp({ Component, pageProps }) {
       setIsAuthenticated(false)
       router.push("/login");
     }else{
-      // console.log("router path",router.pathname)
-      setIsAuthenticated(!!token);
+          setIsAuthenticated(!!token);
     }
   }, [router.pathname]);
 

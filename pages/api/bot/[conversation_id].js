@@ -1,7 +1,7 @@
 import Conversation from "../../../models/Conversations";
-import axios from 'axios';
+import authMiddleware from "../../../middleware/authMiddleware";
 import connectDB from "../../../lib/mongodb";
-export default async function handler(req, res) {
+async function handler(req, res) {
   await connectDB();
     if (req.method === "PATCH") {
       try {
@@ -54,3 +54,6 @@ export default async function handler(req, res) {
       res.status(405).json({ message: "Method Not Allowed" });
     }
 }
+
+export default authMiddleware(handler)
+
