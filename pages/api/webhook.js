@@ -1,6 +1,7 @@
 import Conversation from "../../models/Conversations";
 import connectDB from "../../lib/mongodb";
-export default async function handler(req, res) {
+import authMiddleware from "../../middleware/authMiddleware";
+async function handler(req, res) {
     if (req.method === "GET") {
       await connectDB();
       let conversations = await Conversation.find({status:'processing'},'conversation_id').sort({createdAt : -1})
@@ -29,4 +30,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ message: "No data find to sync" });
       }
     }
-  }
+}
+
+export default authMiddleware(handler)
+
