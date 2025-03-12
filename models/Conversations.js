@@ -15,7 +15,8 @@ const ConversationsSchema = new mongoose.Schema(
     conversation_initiation_client_data: { type: mongoose.Schema.Types.Mixed, required: false },
     prospect_id:{
       type: mongoose.Schema.Types.ObjectId, ref: "Prospects", required: false
-    }
+    },
+    total_message_exchange:{ type:String, required:false}
   },
   { timestamps: true }
 );
