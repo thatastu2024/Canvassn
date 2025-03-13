@@ -207,7 +207,7 @@ class PublicScript {
 
         const img = document.createElement("img");
         img.style.color="black"
-        img.src = "Men.webp"; 
+        img.src = "https://ai-voice-bot-mauve.vercel.app/Men.webp"; 
         img.alt = "User Avatar";
         Object.assign(img.style, {
             width: "100px",
@@ -431,7 +431,7 @@ class PublicScript {
 
         const img = document.createElement("img");
         img.style.color="black"
-        img.src = "Men.webp"; 
+        img.src = "https://ai-voice-bot-mauve.vercel.app/Men.webp"; 
         img.alt = "User Avatar";
         Object.assign(img.style, {
             width: "100px",
