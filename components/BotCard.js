@@ -60,18 +60,24 @@ export default function BotCard({agentDataProps}) {
           setHistoryId(conversationId)
           console.log("Started conversation:", conversationId);
           let token=localStorage.getItem('token')
-          const response = await axios.post('/api/bot',{
-            data:{
-              agent_id:agentDataProps.agent_id,
-              agent_name:agentDataProps.agent_name,
-              conversation_id:conversationId,
-              status:'processing'
+          const response = await axios.post('/api/bot', 
+            {
+              data:{
+                agent_id: agentDataProps.agent_id,
+                agent_name: agentDataProps.agent_name,
+                conversation_id: conversationId,
+                start_time_unix_secs: start_time_unix_secs,
+                status: 'processing',
+                prospect_id: prospectData?.data?.data?._id
+              } 
             },
-            headers:{
-                Authorization:'Bearer '+token,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
+              }
             }
-          })
+          );
         } catch (error) {
           setErrorMessage("Failed to start conversation");
           console.error("Error starting conversation:", error);

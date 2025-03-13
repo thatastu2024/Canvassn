@@ -97,24 +97,28 @@ function InitiatetBotForm({ closePopup,agentDataProps  }) {
           token:prospectToken
         },
         headers:{
-            Authorization:'Bearer '+token,
+            Authorization:`Bearer ${prospectToken}`,
             "Content-Type": "application/json",
         }
       })
-      const response = await axios.post('/api/bot',{
-        data:{
-          agent_id:agentDataProps.agent_id,
-          agent_name:agentDataProps.agent_name,
-          conversation_id:conversationId,
-          start_time_unix_secs:start_time_unix_secs,
-          status:'processing',
-          prospect_id:prospectData?.data?.data?._id
+      const response = await axios.post('/api/bot', 
+        {
+          data:{
+            agent_id: agentDataProps.agent_id,
+            agent_name: agentDataProps.agent_name,
+            conversation_id: conversationId,
+            start_time_unix_secs: start_time_unix_secs,
+            status: 'processing',
+            prospect_id: prospectData?.data?.data?._id
+          } 
         },
-        headers:{
-            Authorization:'Bearer '+token,
+        {
+          headers: {
+            Authorization: `Bearer ${prospectToken}`,
             "Content-Type": "application/json",
+          }
         }
-      })
+      );
     } catch (error) {
       setErrorMessage("Failed to start conversation");
       console.error("Error starting conversation:", error);
