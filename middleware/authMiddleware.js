@@ -2,7 +2,7 @@ import { verifyToken } from "../utils/jwt";
 import Cors from "cors";
 
 const cors = Cors({
-  origin: "*",
+  origin: ["https://your-vercel-app.vercel.app/api"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 });
