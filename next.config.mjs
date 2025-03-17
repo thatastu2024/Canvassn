@@ -10,6 +10,7 @@ const nextConfig = {
                     { key: "Access-Control-Allow-Origin", value: "https://ai-voice-bot-mauve.vercel.app/api" },
                     { key: "Access-Control-Allow-Methods", value: "GET,DELETE,PATCH,POST,PUT" },
                     { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" },
+                    { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" }
                 ]
             }
         ]
