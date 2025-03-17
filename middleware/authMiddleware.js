@@ -1,14 +1,31 @@
 import { verifyToken } from "../utils/jwt";
+import Cors from "cors";
+
+const cors = Cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+});
+
+function runMiddleware(req, res, fn) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(result);
+    });
+  });
+}
 
 export default function authMiddleware(handler) {
   return async (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    await runMiddleware(req, res, cors);
 
     if (req.method === "OPTIONS") {
       return res.status(200).end();
     }
+
     const authHeader=req.headers.authorization
     if(!authHeader){
       return res.status(401).json({ message: "Auth Token Required" });
