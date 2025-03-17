@@ -488,23 +488,81 @@ class PublicScript {
     createLoginForm() {
         const formContainer = document.createElement("div");
         formContainer.innerHTML = `
-            <strong class="text-lg text-black font-semibold mb-4 block">Login Required</strong>
-            <form id="loginForm" class="w-full flex flex-col space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Name</label>
-                    <input type="text" placeholder="Enter your name" 
-                        class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm text-black">
+            <style>
+                /* Title */
+                .title {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    color: black;
+                    margin-bottom: 16px;
+                    display: block;
+                }
+                .form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                }
+                .form-group {
+                    text-align: left;
+                    width: 100%;
+                }
+                    
+                .form-group label {
+                    font-size: .857rem;
+                    font-weight: 500;
+                    color: #4a4a4a;
+                    display: block;
+                    margin-bottom: 4px;
+                    line-height:1.25rem;
+                }
+
+                /* Input fields */
+                .form-group input {
+                    width: 100%;
+                    padding: 8px;
+                    border: 1px solid #ccc;
+                    border-radius: 6px;
+                    font-size: 14px;
+                }
+
+                /* Button */
+                .btn {
+                    background-color: #007bff;
+                    color: white;
+                    font-size: 16px;
+                    font-weight: 500;
+                    padding: 10px;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: background 0.2s ease-in-out;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .btn i {
+                    margin-right: 8px;
+                }
+
+                .btn:hover {
+                    background-color: #0056b3;
+                }
+            </style>
+            <strong class="title">Login Required</strong>
+            <form id="loginForm" class="form">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" placeholder="Enter your name">
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" placeholder="Enter your email" 
-                        class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm text-black">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="Enter your email">
                 </div>
 
-                <button type="submit" 
-                    class="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
-                    <i class="fa-solid fa-sign-in mr-2"></i> Login
+                <button type="submit" class="btn">
+                    <i class="fa-solid fa-sign-in"></i> Login
                 </button>
             </form>
         `;
