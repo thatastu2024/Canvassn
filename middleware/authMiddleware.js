@@ -1,30 +1,30 @@
 import { verifyToken } from "../utils/jwt";
 import Cors from "cors";
 
-const cors = Cors({
-  origin: ["https://your-vercel-app.vercel.app/api"],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-});
+// const cors = Cors({
+//   origin: ["https://your-vercel-app.vercel.app/api"],
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+// });
 
-function runMiddleware(req, res, fn) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-      return resolve(result);
-    });
-  });
-}
+// function runMiddleware(req, res, fn) {
+//   return new Promise((resolve, reject) => {
+//     fn(req, res, (result) => {
+//       if (result instanceof Error) {
+//         return reject(result);
+//       }
+//       return resolve(result);
+//     });
+//   });
+// }
 
 export default function authMiddleware(handler) {
   return async (req, res) => {
-    await runMiddleware(req, res, cors);
+    // await runMiddleware(req, res, cors);
 
-    if (req.method === "OPTIONS") {
-      return res.status(200).end();
-    }
+    // if (req.method === "OPTIONS") {
+    //   return res.status(200).end();
+    // }
 
     const authHeader=req.headers.authorization
     if(!authHeader){
