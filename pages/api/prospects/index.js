@@ -5,7 +5,10 @@ import ChatAgents from "../../../models/ChatAgents";
 import { generateToken } from "../../../utils/jwt";
 import authMiddleware from "../../../middleware/authMiddleware";
 export default async function handler(req, res) {
-
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
     if (req.method === "GET") {
       await connectDB();
       try {
