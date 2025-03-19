@@ -22,7 +22,7 @@ function runMiddleware(req, res, fn) {
 }
 
 async function handler(req, res) {
-
+    console.log(req.headers)
     await runMiddleware(req, res, cors);
 
     // ✅ Explicitly set CORS headers
@@ -43,6 +43,7 @@ async function handler(req, res) {
         const prospects = await Prospects.findOne({
             _id:decoded.id
         },"_id prospect_name prospect_email prospect_location");
+        console.log(res.headers)
         return res.status(200).json({ success: true,message:"Data fetched successfully" ,data: prospects });
       } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
