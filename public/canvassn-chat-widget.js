@@ -330,7 +330,11 @@ class PublicScript {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${authToken}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin":"*",
+                "Access-Control-Allow-Methods":"GET,DELETE,PATCH,POST,PUT",
+                "Access-Control-Allow-Headers":"X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+                "Access-Control-Allow-Credentials":"true"
             },
             body: JSON.stringify({ 
                 data:{
@@ -365,7 +369,11 @@ class PublicScript {
             method: "PUT",
             headers: {
                 "Authorization": `Bearer ${authToken}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin":"*",
+                "Access-Control-Allow-Methods":"GET,DELETE,PATCH,POST,PUT",
+                "Access-Control-Allow-Headers":"X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+                "Access-Control-Allow-Credentials":"true"
             },
             body: JSON.stringify({ 
                 call_duration_secs:elapsedTime,
@@ -504,9 +512,7 @@ class PublicScript {
                 }
                 .form-group {
                     text-align: left;
-                    width: 100%;
                 }
-                    
                 .form-group label {
                     font-size: .857rem;
                     font-weight: 500;
@@ -595,7 +601,11 @@ class PublicScript {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${authToken}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin":"*",
+                "Access-Control-Allow-Methods":"GET,DELETE,PATCH,POST,PUT",
+                "Access-Control-Allow-Headers":"X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+                "Access-Control-Allow-Credentials":"true"
             },
             body: JSON.stringify({ 
                 agent_id:this.agentId,
@@ -645,7 +655,11 @@ class PublicScript {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${authToken}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin":"*",
+                "Access-Control-Allow-Methods":"GET,DELETE,PATCH,POST,PUT",
+                "Access-Control-Allow-Headers":"X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+                "Access-Control-Allow-Credentials":"true"
             }
         })
 
