@@ -27,7 +27,7 @@ async function handler(req, res) {
 
     // ✅ Explicitly set CORS headers
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET,DELETE,PATCH,POST,PUT");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
     // ✅ Handle preflight requests (OPTIONS)
