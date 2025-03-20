@@ -11,7 +11,11 @@ export default async function handler(req, res) {
     res.setHeader("Access-Control-Allow-Credentials", "true");
 
     if (req.method === "OPTIONS") {
-        return res.status(200).end(); // Return a 200 OK response for OPTIONS
+        res.headers("Access-Control-Allow-Origin", "*");
+        res.headers("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        res.headers("Access-Control-Allow-Headers", "Content-Type");
+        res.headers("Access-Control-Allow-Credentials", "true");
+        return res.status(200).json({status:'OK'})
     }
 
     if (req.method === "GET") {
