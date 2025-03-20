@@ -61,7 +61,10 @@ export default async function handler(req, res) {
                 }).lean()
                 if(checkUserExists !== null && checkUserExists.hasOwnProperty('_id')){
                     const token = generateToken(checkUserExists)
-                    res.setHeader("Access-Control-Allow-Origin", "*")
+                    res.header("Access-Control-Allow-Origin", "*");
+                    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+                    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+                    res.header("Access-Control-Allow-Credentials", "true");
                     console.log(res)
                     return res.status(201).json({ success: true, message: "Prospect Authenticated Successfully",data:{
                         prospect_id:checkUserExists._id,
