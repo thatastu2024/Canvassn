@@ -589,7 +589,6 @@ class PublicScript {
 
     handleLogin(e) {
         e.preventDefault();
-        let authToken=localStorage.getItem('authToken')
         this.getAgentId()
         const name = e.target.querySelector('input[type="text"]').value.trim();
         const email = e.target.querySelector('input[type="email"]').value.trim();
@@ -600,12 +599,10 @@ class PublicScript {
         fetch("https://ai-voice-bot-mauve.vercel.app/api/prospects", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${authToken}`,
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin":"*",
                 "Access-Control-Allow-Methods":"GET,DELETE,PATCH,POST,PUT",
                 "Access-Control-Allow-Headers":"X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-                "Access-Control-Allow-Credentials":"true"
             },
             body: JSON.stringify({ 
                 agent_id:this.agentId,
