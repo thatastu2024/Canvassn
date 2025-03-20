@@ -30,10 +30,10 @@ export default async function handler(req, res) {
             }
         }
         const prospects = await Prospects.find({},"_id, prospect_name prospect_email prospect_location createdAt").sort(sortData);
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-        res.header("Access-Control-Allow-Credentials", "true");
+        res.headers("Access-Control-Allow-Origin", "*");
+        res.headers("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        res.headers("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.headers("Access-Control-Allow-Credentials", "true");
         return res.status(200).json({ success: true, data: prospects });
       } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
@@ -101,7 +101,7 @@ export default async function handler(req, res) {
         }
       }
     
-      return res.status(405).json({ success: false, error: "Method Not Allowed" });
+    //   return res.status(405).json({ success: false, error: "Method Not Allowed" });
 }
 
 // authMiddleware(handler)
