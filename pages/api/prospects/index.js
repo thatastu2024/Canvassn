@@ -4,17 +4,37 @@ import Joi from "joi";
 import ChatAgents from "../../../models/ChatAgents";
 import { generateToken } from "../../../utils/jwt";
 import authMiddleware from "../../../middleware/authMiddleware";
+import Cors from "cors";
+
+const cors = Cors({
+    origin: "*", // Change to your frontend URL in production
+    methods: ["POST", "OPTIONS"], // Allow only POST and OPTIONS
+    allowedHeaders: ["Content-Type"]
+});
+
+
+function runMiddleware(req, res, fn) {
+    return new Promise((resolve, reject) => {
+      fn(req, res, (result) => {
+        if (result instanceof Error) {
+          return reject(result);
+        }
+        return resolve(result);
+      });
+    });
+}
+
 export default async function handler(req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
+    await runMiddleware(req, res, cors);
+    // res.setHeader("Access-Control-Allow-Origin", "*");
+    // res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    // res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    // res.setHeader("Access-Control-Allow-Credentials", "true");
 
     if (req.method === "OPTIONS") {
         res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-        res.setHeader("Access-Control-Allow-Credentials", "true");
         return res.status(200).json({status:'OK'})
     }
 
