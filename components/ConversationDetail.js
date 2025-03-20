@@ -186,7 +186,7 @@ const ConversationDetail = ({ isOpen, onClose, conversationDetailsId }) => {
               
                       <div className="p-3 border rounded-lg text-center">
                         <h3 className="font-semibold text-gray-600">Used Credits</h3>
-                        <p className="text-lg font-bold text-green-500">50</p>
+                        <p className="text-lg font-bold text-green-500">{conversationDetail?.metadata?.cost}</p>
                       </div>
                     </div>
                   </div>
