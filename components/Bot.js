@@ -88,8 +88,6 @@ function InitiatetBotForm({ closePopup,agentDataProps  }) {
       const conversationId = await conversation.startSession({
         agentId: agentDataProps.agent_id,
       });
-      console.log("Started conversation:", conversationId);
-      let token=localStorage.getItem('token')
       let start_time_unix_secs=getUnixTime()
       let prospectToken=localStorage.getItem(`prospect_token${agentDataProps.agent_id}`);
       const prospectData = await axios.get('/api/prospects/details',{
