@@ -20,7 +20,9 @@ async function handler(req, res) {
             let requestBody=req.body
             if(requestBody.data.hasOwnProperty('conversation_id')){
                 let finalResponse=requestBody.data
-                const agentDetail = await ChatAgents.findOne({},"_id name").lean().exec()
+                const agentDetail = await ChatAgents.findOne({
+                  agent_id:finalResponse.agent_id
+                },"_id name").lean().exec()
                 finalResponse={
                   ...finalResponse,
                   agent_name:agentDetail.name
