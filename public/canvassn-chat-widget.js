@@ -330,11 +330,7 @@ class PublicScript {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${authToken}`,
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin":"*",
-                "Access-Control-Allow-Methods":"GET,DELETE,PATCH,POST,PUT",
-                "Access-Control-Allow-Headers":"X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-                "Access-Control-Allow-Credentials":"true"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({ 
                 data:{
@@ -369,11 +365,7 @@ class PublicScript {
             method: "PUT",
             headers: {
                 "Authorization": `Bearer ${authToken}`,
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin":"*",
-                "Access-Control-Allow-Methods":"GET,DELETE,PATCH,POST,PUT",
-                "Access-Control-Allow-Headers":"X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-                "Access-Control-Allow-Credentials":"true"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({ 
                 call_duration_secs:elapsedTime,
@@ -589,7 +581,6 @@ class PublicScript {
 
     handleLogin(e) {
         e.preventDefault();
-        let authToken=localStorage.getItem('authToken')
         this.getAgentId()
         const name = e.target.querySelector('input[type="text"]').value.trim();
         const email = e.target.querySelector('input[type="email"]').value.trim();
@@ -600,12 +591,7 @@ class PublicScript {
         fetch("https://ai-voice-bot-mauve.vercel.app/api/prospects", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${authToken}`,
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin":"*",
-                "Access-Control-Allow-Methods":"GET,DELETE,PATCH,POST,PUT",
-                "Access-Control-Allow-Headers":"X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-                "Access-Control-Allow-Credentials":"true"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({ 
                 agent_id:this.agentId,
@@ -655,21 +641,15 @@ class PublicScript {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${authToken}`,
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin":"*",
-                "Access-Control-Allow-Methods":"GET,DELETE,PATCH,POST,PUT",
-                "Access-Control-Allow-Headers":"X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-                "Access-Control-Allow-Credentials":"true"
+                "Content-Type": "application/json"
             }
         })
 
         const data=await response.json()
         if(data?.data?.expired === true){
-            console.log("here")
             localStorage.removeItem('authToken')
             location.reload();
         }else{
-            console.log("here 2")
             return data.data
         }
     }

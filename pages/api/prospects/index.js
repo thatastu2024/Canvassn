@@ -4,11 +4,36 @@ import Joi from "joi";
 import ChatAgents from "../../../models/ChatAgents";
 import { generateToken } from "../../../utils/jwt";
 import authMiddleware from "../../../middleware/authMiddleware";
+import Cors from "cors";
+
+const cors = Cors({
+    origin: "*", // Change to your frontend URL in production
+    methods: ["POST", "OPTIONS"], // Allow only POST and OPTIONS
+    allowedHeaders: ["Content-Type"]
+});
+
+
+function runMiddleware(req, res, fn) {
+    return new Promise((resolve, reject) => {
+      fn(req, res, (result) => {
+        if (result instanceof Error) {
+          return reject(result);
+        }
+        return resolve(result);
+      });
+    });
+}
+
 export default async function handler(req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
+    await runMiddleware(req, res, cors);
+
+    if (req.method === "OPTIONS") {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        return res.status(200).json({status:'OK'})
+    }
+
     if (req.method === "GET") {
       await connectDB();
       try {
@@ -74,7 +99,6 @@ export default async function handler(req, res) {
                         status: 'active'
                     }
                     let data=await Prospects.create(finalResponse);
-                    console.log(data._id)
                     if(data) {
                         const token = generateToken(data)
                         return res.status(201).json({ success: true, message: "Prospect record captured successfully",data:{
@@ -91,8 +115,6 @@ export default async function handler(req, res) {
           return res.status(400).json({ success: false, error: error.message });
         }
       }
-    
-      return res.status(405).json({ success: false, error: "Method Not Allowed" });
 }
 
 // authMiddleware(handler)
