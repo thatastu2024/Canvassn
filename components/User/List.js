@@ -4,11 +4,13 @@ import { faArrowDown,faArrowUp} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NoDataFound from "../NoDataFound";
 import {formatDateTime} from '../../utils/dateUtil'
+import Create from '../User/Create'
 
 export default function UserList() {
   const [error, setError] = useState("");
   const [users,setUsers] = useState();
   const [loading, setLoading] = useState(true);
+  const [openUserForm,setOpenUserForm] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -55,6 +57,15 @@ export default function UserList() {
   if(!users?.length === 0 || users === undefined){
     return <NoDataFound/>;
   }
+
+  const openFormModel = () =>{
+    if(openUserForm === false){
+      setOpenUserForm(true)
+    }else{
+      setOpenUserForm(true)
+    }
+  }
+
   return (
     <>
         <div className="p-6">
@@ -70,7 +81,8 @@ export default function UserList() {
               <option>Admin</option>
               <option>User</option>
             </select>
-            <button className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition ml-2 mr-2">Create New User</button>
+            <button className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition ml-2 mr-2"
+            onClick={openFormModel}>Create New User</button>
           </div>
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -130,6 +142,7 @@ export default function UserList() {
             </button> */}
           </div>
         </div>
+        <Create openUserForm={openUserForm} setOpenUserForm={setOpenUserForm}></Create>
         </>
   );
 }
