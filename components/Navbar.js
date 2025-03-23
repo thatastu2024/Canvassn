@@ -1,29 +1,34 @@
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from "next/router";
 
 export default function Navbar() {
-
+  const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
+  const logout = () =>{
+    localStorage.removeItem('token')
+    router.push("/login");
+  }
+
   return (
-    <nav className="bg-gray-800 p-4">
+    <nav className="bg-gray-800 p-2">
       <div className="container mx-auto flex justify-between items-center">
         <Link className="text-white text-lg font-semibold" href="/">
         </Link>
         <div className="relative">
-        {/* {session ? ( */}
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <button onClick={toggleDropdown} className="focus:outline-none">
-                  {/* <img
-                    src='/default-avatar.png'
+                  <img
+                    src='/Men.webp'
                     alt="Profile"
                     className="w-10 h-10 rounded-full"
-                  /> */}
+                  />
                 </button>
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20">
@@ -31,7 +36,7 @@ export default function Navbar() {
                       View Profile
                     </Link>
                     <button
-                      onClick={() => signOut()}
+                      onClick={logout}
                       className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
                     >
                       Sign out
@@ -40,14 +45,6 @@ export default function Navbar() {
                 )}
               </div>
             </div>
-          {/* ) : ( */}
-            <button
-              onClick={() => signIn()}
-              className="bg-blue-600 text-white px-3 py-1 rounded"
-            >
-              Sign in
-            </button>
-          {/* )} */}
         </div>
       </div>
     </nav>

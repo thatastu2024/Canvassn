@@ -5,7 +5,7 @@ export default function KnowledgeBaseListComponent() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     getknowledgeBase();
-  });
+  },[]);
 
   const getknowledgeBase = async () => {
     const KnowledgeBaseResponse = await axios.get(process.env.NEXT_PUBLIC_ELEVEN_LABS_API_BASEURL+'/knowledge-base',{
