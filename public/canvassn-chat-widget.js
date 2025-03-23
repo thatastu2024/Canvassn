@@ -602,7 +602,6 @@ class PublicScript {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data)
             if (data.data.prospectToken) {
                 localStorage.setItem("authToken", data.data.prospectToken);
                 alert("Login successful!");
@@ -646,7 +645,7 @@ class PublicScript {
         })
 
         const data=await response.json()
-        if(data?.data?.expired === true){
+        if(data?.expired === true){
             localStorage.removeItem('authToken')
             location.reload();
         }else{
