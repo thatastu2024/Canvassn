@@ -1,8 +1,11 @@
 import React from 'react';
+import withAuth from "../../middleware/withAuth";
 
 import UserList from '../../components/User/List'
-export default function UserListComponent(){
+const UserListComponent = () =>{
     return(
         <UserList></UserList>
     )
 }
+
+export default withAuth(UserListComponent,["superadmin"]);
