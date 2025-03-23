@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import Joi from "joi";
+import axios from "axios";
 
 export default function Create({openUserForm,setOpenUserForm}) {
     
     const [errors, setErrors] = useState({});
+    const [agentData, setAgentData] = useState([])
   
     const [formData, setFormData] = useState({
         customerName: "",
@@ -46,7 +48,27 @@ export default function Create({openUserForm,setOpenUserForm}) {
             "string.min": "Domain Name should be at least 2 characters",
         }),
       });
+    
+    useEffect(()=>{
+      if(openUserForm){
+        fetchAgents()
+      }
+    },[openUserForm])  
 
+    const fetchAgents = async() =>{
+      try{
+        let token=localStorage.getItem('token')
+        const agentData = await axios.get('/api/chatagent/util',{
+          headers:{
+              Authorization:`Bearer ${token}`,
+              "Content-Type": "application/json",
+          }
+        })
+        setAgentData(agentData?.data?.data)
+      }catch(error){
+        console.log(error)
+      }
+    }
       const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -74,18 +96,34 @@ export default function Create({openUserForm,setOpenUserForm}) {
           });
           setErrors(errorMessages);
           return false;
+        }else{
+          setErrors({});
+          return true;
         }
-    
-        setErrors({});
-        return true;
       };
     
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!validateForm()) return;
-    
-        console.log("Form Submitted", formData);
-        // setOpenUserForm(false);
+      const handleSubmit = async(e) => {
+        console.log(!validateForm())
+        if (!validateForm()) {
+          return
+        }else{
+          let token=localStorage.getItem('token')
+          const agentData = await axios.post('/api/users',{
+            ...formData
+          },{
+            headers:{
+                Authorization:`Bearer ${token}`,
+                "Content-Type": "application/json",
+            }
+          })
+          if(agentData.data.status === 422){
+            setErrors(agentData.data.message)
+          }else{
+            alert(agentData.data.message)
+            setOpenUserForm(false);
+            location.reload();
+          }
+        };
       };
   
     return (
@@ -99,9 +137,9 @@ export default function Create({openUserForm,setOpenUserForm}) {
              <button onClick={() => setOpenUserForm(false)} className="text-gray-500 hover:text-red-600">✖</button>
            </div>
    
-           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+           <div className="space-y-4 mt-4">
              <div className="grid grid-cols-2 gap-4">
-               
+             {errors.customerName && <p className="text-red-500 text-xs">{errors.customerName}</p>}
                <div>
                  <label className="block text-sm font-medium">Customer Name</label>
                  <input type="text" name="customerName" value={formData.customerName} onChange={handleChange}
@@ -144,7 +182,7 @@ export default function Create({openUserForm,setOpenUserForm}) {
                  <label className="block text-sm font-medium">User Plan</label>
                  <select name="userPlan" value={formData.userPlan} onChange={handleChange}
                    className="w-full px-3 py-2 border rounded-lg">
-                   <option value="basic">Basic</option>
+                   <option value="basic" selected>Basic</option>
                    <option value="premium">Premium</option>
                    <option value="enterprise">Enterprise</option>
                  </select>
@@ -154,15 +192,25 @@ export default function Create({openUserForm,setOpenUserForm}) {
                  <input type="text" name="domain" onChange={handleChange} className="w-full px-3 py-2 border rounded-lg"/>
                  {errors.domain && <p className="text-red-500 text-xs">{errors.domain}</p>}
                </div>
+               <div>
+                 <label className="block text-sm font-medium">Agents</label>
+                 <select name="agent" value={formData.agent} onChange={handleChange}
+                   className="w-full px-3 py-2 border rounded-lg">
+                   <option value="">Select agent</option>
+                  {agentData.map((agent) => (
+                    <option key={agent.agent_id} value={agent.agent_id}>{agent.name}</option>
+                  ))}
+                 </select>
+               </div>
    
              </div>
    
              <div className="flex justify-between pt-3 border-t">
-               <button type="submit" className="px-4 py-2 text-white bg-blue-600 rounded-md">Submit</button>
+               <button type="submit" className="px-4 py-2 text-white bg-blue-600 rounded-md" onClick={handleSubmit}>Submit</button>
                <button type="button" onClick={() => setOpenUserForm(false)} className="px-4 py-2 text-gray-700 bg-gray-300 rounded-md">Cancel</button>
              </div>
    
-           </form>
+           </div>
          </div>
        </div>
          )}
