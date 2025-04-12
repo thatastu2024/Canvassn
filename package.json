@@ -37,6 +37,8 @@
     "react-icons": "^5.4.0",
     "recharts": "^2.15.1",
     "session": "^0.1.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "wavesurfer.js": "^7.9.1",
     "yup": "^1.4.0"
   },
