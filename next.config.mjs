@@ -11,6 +11,13 @@ const nextConfig = {
                     { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" },
                     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" }
                 ]
+            },
+            {
+                source: "/api/socket",
+                headers: [
+                    { key: "Access-Control-Allow-Origin", value: "*" },
+                    { key: "Access-Control-Allow-Methods", value: "GET,POST" }
+                ]
             }
         ]
     }

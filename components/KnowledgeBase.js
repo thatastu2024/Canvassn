@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import ChatWidget from './ChatWidget';
 export default function KnowledgeBaseListComponent() {
   const [knowledgeBaseList, setKnowledgeBaseList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,6 +60,7 @@ export default function KnowledgeBaseListComponent() {
         </tbody>
       </table>
       <div className="flex justify-between items-center mt-4">
+        <ChatWidget></ChatWidget>
         {/* <button
           onClick={() => setPage(page - 1)}
           disabled={page === 1}
