@@ -24,7 +24,7 @@ export default function handler(req, res) {
             `https://n8n.canvassn.co.in/webhook/chatbot?query=${encodeURIComponent(data.message)}`
           );
           // await ChatHistory.
-          console.log(getFormattedTimestamp())
+          // console.log(getFormattedTimestamp())
           socket.emit("receiveMessage", n8nResponse.data[0].response.text);
         } catch (error) {
           console.error("Error communicating with n8n:", error);

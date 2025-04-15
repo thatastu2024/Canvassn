@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { isToday, isThisWeek, parse } from 'date-fns';
 
 const socket = io("http://localhost:3000", { path: "/api/socket" });
 
@@ -11,7 +12,6 @@ export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
-    // await axios.get()
     socket.on("connect", () => console.log("Connected:", socket.id));
 
     socket.on("receiveMessage", (message) => {
@@ -37,14 +37,20 @@ export default function ChatWidget() {
           "Content-Type": "application/json",
         } 
       });
-      const loaded = res.data.messages.map(msg => ({
-        text: msg.text,
-        sender: msg.sender,
-        timestamp: msg.timestamp
-      }));
-      setMessages(loaded);
+      const data = res.data.data;
+      if (Array.isArray(data) && data.length > 0 && data[0].transcript) {
+        const parsedMessages = data[0].transcript.map((item) => ({
+          text: item.message,
+          sender: item.role === "user" ? "user" : "bot",
+          timestamp: item.time_unix,
+        }));
+        setMessages(parsedMessages);
+      } else {
+        setMessages([]);
+      }
     } catch (err) {
       console.error("Failed to load chat history:", err);
+      setMessages([]);
     }
   }
 
@@ -54,6 +60,20 @@ export default function ChatWidget() {
     const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     return `${date} ${time}`;
   }
+
+  const getBadgeLabel = (timestamp) => {
+    const parsed = new Date(timestamp);
+  
+    if (isToday(parsed)) {
+      return "Today";
+    }
+  
+    if (isThisWeek(parsed, { weekStartsOn: 1 })) {
+      return parsed.toLocaleDateString("en-US", { weekday: "long" }); // e.g., "Tuesday"
+    }
+  
+    return parsed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
 
   const sendMessage = () => {
     if (!input.trim()) return;
@@ -102,49 +122,64 @@ export default function ChatWidget() {
 
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex items-center text-sm ${
-              msg.sender === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            {msg.sender === "bot" && (
-              <img src="/Women.webp" alt="Bot" className="w-6 h-6 rounded-full mr-2" />
-            )}
-            {/* <div className="flex flex-col max-w-full"> */}
-            <span
-              className={`inline-block px-3 py-2 rounded-md max-w-[75%] break-words ${
-                msg.sender === "user"
-                  ? "bg-gray-300 text-black"
-                  : "bg-green-200 text-green-800"
-              }`}
-            >
-              {msg.text}
-              <span className={`text-[10px] text-gray-500 mt-0.5 ml-1
-                ${
-                  msg.sender === "user"
-                    ? "bg-gray-300 text-black"
-                    : "bg-green-200 text-green-800"
-                }
-              `}>
-                <span className={`text-[10px] text-gray-500 mt-0.5 ml-1
-                  ${
+      <div className="flex flex-col space-y-2 p-4 overflow-y-auto">
+      {/* {showDateBadge && ( */}
+        {/* <div className="self-center bg-white text-gray-700 text-xs px-3 py-1 rounded-full mb-2 shadow-sm">
+          {getBadgeLabel(msg.timestamp)}
+        </div> */}
+      {/* )} */}
+        {console.log(messages)}
+        {
+          messages.length === 0 ? (
+            <div className="text-gray-400 text-center mt-4">Please hit any question</div>
+          ) : (
+            messages.map((msg, i) => (
+              <div
+                key={i}
+                className={`flex items-center text-sm ${
+                  msg.sender === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                {/* <div className="self-center bg-white text-gray-700 text-xs px-3 py-1 rounded-full mb-2 shadow-sm">
+                {getBadgeLabel(msg.timestamp)}
+              </div> */}
+                {msg.sender === "bot" && (
+                  <img src="/Women.webp" alt="Bot" className="w-6 h-6 rounded-full mr-2" />
+                )}
+                {/* <div className="flex flex-col max-w-full"> */}
+                <span
+                  className={`inline-block px-3 py-2 rounded-md max-w-[75%] break-words ${
                     msg.sender === "user"
                       ? "bg-gray-300 text-black"
                       : "bg-green-200 text-green-800"
-                  }
+                  }`}
+                >
+                  {msg.text}
+                  <span className={`text-[10px] text-gray-500 mt-0.5 ml-1
+                    ${
+                      msg.sender === "user"
+                        ? "bg-gray-300 text-black"
+                        : "bg-green-200 text-green-800"
+                    }
                   `}>
-                  {msg.timestamp?.split(" ")[3]} {msg.timestamp?.split(" ")[4]}
+                    <span className={`text-[10px] text-gray-500 mt-0.5 ml-1
+                      ${
+                        msg.sender === "user"
+                          ? "bg-gray-300 text-black"
+                          : "bg-green-200 text-green-800"
+                      }
+                      `}>
+                      {msg.timestamp?.split(" ")[3]} {msg.timestamp?.split(" ")[4]}
+                    </span>
+                  </span>
                 </span>
-              </span>
-            </span>
-            {/* </div> */}
-            {msg.sender === "user" && (
-              <img src="/Men.webp" alt="User" className="w-6 h-6 rounded-full ml-2" />
-            )}
+                {/* </div> */}
+                {msg.sender === "user" && (
+                  <img src="/Men.webp" alt="User" className="w-6 h-6 rounded-full ml-2" />
+                )}
           </div>
-        ))}
+        )))}
+        </div>
       </div>
 
       {/* Input */}
