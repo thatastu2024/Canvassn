@@ -97,7 +97,7 @@ class PublicScript {
     }
 
     createModals() {
-        this.modal1 = this.createStyledModal("Ask Anythings", () => this.toggleModal1(), () => this.openModal2());
+        this.modal1 = this.createStyledModal("Ask Anythings", () => this.toggleModal2(), () => this.openModal2());
         document.body.appendChild(this.modal1);
     }
  
@@ -424,7 +424,7 @@ class PublicScript {
         closeBtn.style.border = "none";
         closeBtn.style.background = "transparent";
         closeBtn.style.cursor = "pointer";
-        closeBtn.onclick = closeAction;
+        closeBtn.onclick = () => this.toggleModal2();
         header.appendChild(closeBtn);
         modal.appendChild(header);
 
@@ -628,6 +628,12 @@ class PublicScript {
         if (!this.modal1) return;
         this.modal1.style.bottom = this.modal1Open ? "-400px" : "80px";
         this.modal1Open = !this.modal1Open;
+    }
+
+    toggleModal2() {
+        if (!this.modal2) return;
+        this.modal2.style.bottom = this.modal2Open ? "-400px" : "80px";
+        this.modal2Open = !this.modal2Open;
     }
 
     async fetchUserDetail(){
