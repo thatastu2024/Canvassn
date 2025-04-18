@@ -30,6 +30,7 @@ async function handler(req, res) {
         return res.status(200).json({ message: "No data find to sync" });
       }
     }
+    
 }
 
 export default authMiddleware(handler)

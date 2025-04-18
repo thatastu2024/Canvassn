@@ -2,8 +2,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { isToday, isThisWeek, parse } from 'date-fns';
+import Pusher from "pusher-js";
 
-const socket = io(process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_SOCKET_SERVER_URL : "http://localhost:3000", { path: "/api/socket" });
+// const socket = io(process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_SOCKET_SERVER_URL : "http://localhost:3000", { path: "/api/socket" });
 
 export default function ChatWidget() {
   const [messages, setMessages] = useState([]);
@@ -12,18 +13,37 @@ export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
-    socket.on("connect", () => console.log("Connected:", socket.id));
-
-    socket.on("receiveMessage", (message) => {
-      setMessages((prev) =>
-        prev.map((msg) =>
-          msg.text === "thinking..." ? { text: message, sender: "bot" } : msg
-        )
-      );
-      setWaitingForBot(false);
+    const pusher = new Pusher("49dd9dac8eb95ca3a38a", {
+      cluster: "ap2",
+    });
+  
+    const channel = pusher.subscribe("canvassn-bot-18113325");
+  
+    channel.bind("new-message", async (data) => {
+      console.log(data)
+      let token=localStorage.getItem('authToken');
+      await axios.post('/api/chatbot/history',data,{
+        headers:{
+          "Content-Type": "application/json",
+          "Authorization": token
+        }
+      })
+      setMessages((prev) => {
+        const newMsgs = [...prev];
+        const thinkingIndex = newMsgs.findIndex((msg) => msg.thinking);
+        if (thinkingIndex > -1) {
+          newMsgs[thinkingIndex] = data;
+        } else {
+          newMsgs.push(data);
+        }
+        return newMsgs;
+      });
     });
     fetchMessages()
-    return () => socket.off("receiveMessage");
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
   }, []);
 
   const fetchMessages = async() =>{
@@ -38,16 +58,9 @@ export default function ChatWidget() {
         } 
       });
       const data = res.data.data;
-      if (Array.isArray(data) && data.length > 0 && data[0].transcript) {
-        const parsedMessages = data[0].transcript.map((item) => ({
-          text: item.message,
-          sender: item.role === "user" ? "user" : "bot",
-          timestamp: item.time_unix,
-        }));
-        setMessages(parsedMessages);
-      } else {
-        setMessages([]);
-      }
+      const allMessages = data.flatMap(chat => chat.transcript);
+      allMessages.sort((a, b) => new Date(a.time_unix) - new Date(b.time_unix));
+      setMessages(allMessages);
     } catch (err) {
       console.error("Failed to load chat history:", err);
       setMessages([]);
@@ -75,37 +88,53 @@ export default function ChatWidget() {
     return parsed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   };
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!input.trim()) return;
 
     const timestamp = getFormattedTimestamp();
 
     const userMessage = {
       text: input,
-      sender: "user",
+      role: "user",
       timestamp,
+      prospectId:localStorage.getItem('authToken'),
+      userId:'qwss0dosb'
     };
-  
+    let token=localStorage.getItem('authToken');
+    setMessages((prev) => [...prev, userMessage]);
+    await axios.post('/api/chatbot/history',userMessage,{
+      headers:{
+        "Content-Type": "application/json",
+        "Authorization": token
+      }
+    })
 
-    const placeholderBotReply = {
-      text: "thinking...",
-      sender: "bot",
-      timestamp,
+    const thinkingMsg = {
+      role: "bot",
+      text: "Thinking...",
+      thinking: true,
+      time_unix: null,
     };
-
-    setMessages((prev) => [
-      ...prev,
-      userMessage,
-      placeholderBotReply
-    ]);
+    setMessages((prev) => [...prev, thinkingMsg]);
 
     setWaitingForBot(true);
-    console.log(input,localStorage.getItem('authToken'))
-    socket.emit("sendMessage", {
-      message:input,
-      prospectId:localStorage.getItem('authToken'),
-      userId:'qwss0dosb',
-      timestamp
+
+    const res = await axios.get("https://n8n.canvassn.co.in/webhook/chatbot", {
+      params: {
+        query: input
+      },
+    });
+
+    await axios.post("/api/pusher", {
+      channel: "canvassn-bot-18113325",
+      event: "new-message",
+      data: {
+        role: "bot",
+        text: res.data[0].response.text,
+        timestamp: timestamp,
+        prospectId:localStorage.getItem('authToken'),
+        userId:'qwss0dosb'
+      },
     });
     setInput("");
   };
@@ -137,44 +166,44 @@ export default function ChatWidget() {
               <div
                 key={i}
                 className={`flex items-center text-sm ${
-                  msg.sender === "user" ? "justify-end" : "justify-start"
+                  msg.role === "user" ? "justify-end" : "justify-start"
                 }`}
               >
                 {/* <div className="self-center bg-white text-gray-700 text-xs px-3 py-1 rounded-full mb-2 shadow-sm">
                 {getBadgeLabel(msg.timestamp)}
               </div> */}
-                {msg.sender === "bot" && (
+                {msg.role === "bot" && (
                   <img src="/Women.webp" alt="Bot" className="w-6 h-6 rounded-full mr-2" />
                 )}
                 {/* <div className="flex flex-col max-w-full"> */}
                 <span
                   className={`inline-block px-3 py-2 rounded-md max-w-[75%] break-words ${
-                    msg.sender === "user"
+                    msg.role === "user"
                       ? "bg-gray-300 text-black"
                       : "bg-green-200 text-green-800"
                   }`}
                 >
-                  {msg.text}
+                  {msg.text || msg.message}
                   <span className={`text-[10px] text-gray-500 mt-0.5 ml-1
                     ${
-                      msg.sender === "user"
+                      msg.role === "user"
                         ? "bg-gray-300 text-black"
                         : "bg-green-200 text-green-800"
                     }
                   `}>
                     <span className={`text-[10px] text-gray-500 mt-0.5 ml-1
                       ${
-                        msg.sender === "user"
+                        msg.role === "user"
                           ? "bg-gray-300 text-black"
                           : "bg-green-200 text-green-800"
                       }
                       `}>
-                      {msg.timestamp?.split(" ")[3]} {msg.timestamp?.split(" ")[4]}
+                      {msg.timestamp?.split(" ")[3] || msg.time_unix?.split(" ")[3]} {msg.timestamp?.split(" ")[4] || msg.time_unix?.split(" ")[4]}
                     </span>
                   </span>
                 </span>
                 {/* </div> */}
-                {msg.sender === "user" && (
+                {msg.role === "user" && (
                   <img src="/Men.webp" alt="User" className="w-6 h-6 rounded-full ml-2" />
                 )}
           </div>
