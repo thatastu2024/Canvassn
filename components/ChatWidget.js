@@ -20,7 +20,6 @@ export default function ChatWidget() {
     const channel = pusher.subscribe("canvassn-bot-18113325");
   
     channel.bind("new-message", async (data) => {
-      console.log(data)
       let token=localStorage.getItem('authToken');
       await axios.post('/api/chatbot/history',data,{
         headers:{
