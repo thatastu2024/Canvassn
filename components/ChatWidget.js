@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { isToday, isThisWeek, parse } from 'date-fns';
 
-const socket = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL === "production" ? process.env.NEXT_PUBLIC_SOCKET_SERVER_URL : "http://localhost:3000", { path: "/api/socket" });
+const socket = io(process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_SOCKET_SERVER_URL : "http://localhost:3000", { path: "/api/socket" });
 
 export default function ChatWidget() {
   const [messages, setMessages] = useState([]);
