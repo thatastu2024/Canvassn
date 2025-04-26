@@ -198,7 +198,7 @@ export default function Create({openUserForm,setOpenUserForm}) {
                    className="w-full px-3 py-2 border rounded-lg">
                    <option value="">Select agent</option>
                   {agentData.map((agent) => (
-                    <option key={agent.agent_id} value={agent.agent_id}>{agent.name}</option>
+                    <option key={agent.agent_id} value={agent.agent_id}>{agent.name} - {agent.agent_type}</option>
                   ))}
                  </select>
                </div>

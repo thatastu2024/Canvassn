@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useConversation } from "@11labs/react";
-import { Mic, MicOff, Volume2, VolumeX } from "lucide-react";
+import { Mic, MicOff, Volume2, VolumeX ,Send, X} from "lucide-react";
 import axios from 'axios';
 import Image from 'next/image';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Phone } from "lucide-react";
 
 
-export default function BotCard({agentDataProps}) {
+export default function BotCard({agentDataProps,isVoiceMode,onModeChange}) {
     const [hasPermission, setHasPermission] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [aiText,setAiText] = useState("");
     const [userText,setUserText] = useState("");
     const [historyId,setHistoryId] = useState()
-    
+    const [timer, setTimer] = useState("00:00");
+    const [message, setMessage] = useState("");
     const conversation =useConversation({
         onConnect: () => {
           console.log("Connected to ElevenLabs");
@@ -119,18 +124,25 @@ export default function BotCard({agentDataProps}) {
       };
       return (
         <>
-      <div className="flex flex-col items-center justify-center  bg-gradient-to-b from-white-100 to-blue-100 p-2">
-        <h4>Powered by Canvassn</h4>
+      <ScrollArea className="flex-1 p-4">
+      <div className="flex flex-col items-center justify-center space-y-6 pt-20">
         <h2 className="text-lg font-semibold text-gray-900">Voice Chat</h2>
-        <div className="bg-white rounded-2xl shadow-lg p-6 w-96">
           <div className="flex flex-col items-center">
-              <Image 
-                  src={agentDataProps.avatar} 
-                  alt="Avatar" 
-                  width={100} 
-                  height={100} 
-                  className="rounded-full mb-6 mt-4"
-              />
+              <Avatar className="h-32 w-32">
+                <AvatarImage src={agentDataProps.avatar} alt={agentDataProps.name} />
+                <AvatarFallback>{agentDataProps.name.substring(0, 2)}</AvatarFallback>
+              </Avatar>
+              <div className="text-4xl mt-4 font-semibold">{timer}</div>
+              <div className="rounded-full bg-gray-200 p-4">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-12 w-12"
+                  onClick={() => onModeChange(false)}
+                >
+                  <Phone className={`h-5 w-5 ${isVoiceMode ? "text-red-500" : ""}`} />
+                </Button>
+              </div>
           </div>
           <div className="flex justify-center items-center mb-4">
             <button className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200"
@@ -146,19 +158,18 @@ export default function BotCard({agentDataProps}) {
           </div>
           {
             status === "connected" ? (
-            <button className="w-full flex items-center justify-center gap-2  py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all"
+            <button className="w-[100px] flex items-center justify-center gap-2  py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all"
             onClick={handleEndConversation}>
               <span><MicOff className="mr-2 h-4 w-4" /></span> End Conversation
             </button>
             ) : (
-              <button className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
+              <button className="w-[500px] flex items-center justify-center gap-2 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
               onClick={handleStartConversation}
               disabled={!hasPermission}
               >
               <span><Mic className="mr-2 h-4 w-4" /></span> Start Conversation
             </button>)
           }
-        </div>
 
         <div className="text-center text-sm">
               {status === "connected" && (
@@ -179,6 +190,7 @@ export default function BotCard({agentDataProps}) {
           </p>
         )}
     </div> 
+    </ScrollArea>
     </> 
       );
 }

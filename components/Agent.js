@@ -3,6 +3,7 @@ import axios from 'axios';
 import BotCard from './BotCard';
 import BotButton from './Bot';
 import ViewAgentComponent from './Prospect/ViewAgent';
+import ChatBot from './Chatbot/index';
 export default function AgentListComponent() {
   const [agents,setAgents] = useState();
   const [loading, setLoading] = useState(true);
@@ -11,7 +12,8 @@ export default function AgentListComponent() {
     _id:0,
     agent_id:0,
     agent_name:"",
-    avatar:""
+    avatar:"",
+    agent_type:""
   })
   const [isSelected,setIsSelected] = useState(false)
 
@@ -52,20 +54,22 @@ export default function AgentListComponent() {
   }
 
   const onSelect = (agent) =>{
+    console.log()
     setSelectedAgent(()=>({
       _id:agent._id,
-      agent_id:agent.agent_id,
+      agent_id:agent.agent_id || agent._id,
       agent_name:agent.name,
-      avatar:agent.avatar
+      avatar:agent.avatar,
+      agent_type:agent.agent_type
     }))
     setIsSelected(true)
   }
 
   return (
     <>
-    <div>
+    <div className='h-auto'>
       <div className="bg-white grid grid-cols-2 gap-4 p-4 border">
-        <div className="p-4 border-r">
+        <div className="p-4">
           <h2 className="bg-white text-lg font-bold mb-4">AI Agents</h2>
           <hr />
           {agents.map((agent, index) => (
@@ -75,8 +79,6 @@ export default function AgentListComponent() {
               onClick={() => onSelect(agent)}
             >
               {agent.name}
-              {/* &nbsp;
-              <FontAwesomeIcon icon={faLink} /> */}
             </div>
           ))}
         </div>
@@ -84,29 +86,26 @@ export default function AgentListComponent() {
           <h2 className="text-lg font-bold mb-4">{selectedAgent.agent_name}</h2>
           <hr />
           {
-            isSelected ? (
+            isSelected && selectedAgent.agent_type !== "chat" ? (
               <BotCard agentDataProps={selectedAgent}></BotCard>
             ) : (
-              <h2 className="text-gray-500 text-2xl font-semibold">No Agent Selected</h2>
+              selectedAgent.agent_type === "chat" ? (
+                <ChatBot agentDataProps={selectedAgent}></ChatBot>
+              ):(
+                <h2 className="text-gray-500 text-2xl font-semibold">No Agent Selected</h2>
+              )
             )
           }
-          {/* {
-            isSelected ? (
-              <p className='flex-1 bg-transparent text-sm outline-none'>{`<canvassn-chat-widget agent-id="${selectedAgent.agent_id}"></canvassn-chat-widget>
-          <script src="https://ai-voice-bot-mauve.vercel.app/canvassn-chat-widget.js" async></script>`}</p>
-            ) : ("")
-          } */}
         </div>
       </div>
       {
-            isSelected ? (
+            isSelected && selectedAgent.agent_type !== "chat"  ? (
               <BotButton agentDataProps={selectedAgent} />
             ) : (
               ""
             )
       }
     </div>
-    {/* <ViewAgentComponent></ViewAgentComponent> */}
     </>
   );
 }

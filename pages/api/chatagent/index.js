@@ -1,12 +1,20 @@
 import connectDB from "../../../lib/mongodb";
 import ChatAgent from "../../../models/ChatAgents";
 import authMiddleware from "../../../middleware/authMiddleware";
+import jwt from "jsonwebtoken";
 async function handler(req, res) {
-
+  await connectDB();
     if (req.method === "GET") {
-      await connectDB();
         try {
-          const agents = await ChatAgent.find({},"_id, name agent_id avatar").limit(10);
+          const token = req.headers.authorization.replace("Bearer ", "");
+          const userDetails = jwt.verify(token, process.env.JWT_SECRET);
+          let filter={}
+          if(userDetails.user_type === "admin"){
+            filter={
+              customer_id:userDetails.id
+            }
+          }
+          const agents = await ChatAgent.find(filter,"_id, name agent_id avatar agent_type").limit(10);
           return res.status(200).json({ success: true, data: agents });
         } catch (error) {
           return res.status(500).json({ success: false, error: error.message });
