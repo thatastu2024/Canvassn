@@ -1,70 +1,71 @@
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { isToday, isThisWeek, parse } from 'date-fns';
 import Pusher from "pusher-js";
+import Image from 'next/image';
 
-// const socket = io(process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_SOCKET_SERVER_URL : "http://localhost:3000", { path: "/api/socket" });
-
-export default function ChatWidget() {
-  const [messages, setMessages] = useState([]);
+export default function ChatBot ({agentDataProps}){
+    const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [waitingForBot, setWaitingForBot] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
-    const pusher = new Pusher("49dd9dac8eb95ca3a38a", {
-      cluster: "ap2",
-    });
+    console.log("hello")
+    // const pusher = new Pusher("49dd9dac8eb95ca3a38a", {
+    //   cluster: "ap2",
+    // });
   
-    const channel = pusher.subscribe("canvassn-bot-18113325");
+    // const channel = pusher.subscribe("canvassn-bot-18113325");
   
-    channel.bind("new-message", async (data) => {
-      let token=localStorage.getItem('authToken');
-      await axios.post('/api/chatbot/history',data,{
-        headers:{
-          "Content-Type": "application/json",
-          "Authorization": token
-        }
-      })
-      setMessages((prev) => {
-        const newMsgs = [...prev];
-        const thinkingIndex = newMsgs.findIndex((msg) => msg.thinking);
-        if (thinkingIndex > -1) {
-          newMsgs[thinkingIndex] = data;
-        } else {
-          newMsgs.push(data);
-        }
-        return newMsgs;
-      });
-    });
-    fetchMessages()
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-    };
+    // channel.bind("new-message", async (data) => {
+    //   let token=localStorage.getItem('authToken');
+    //   await axios.post('/api/chatbot/history',data,{
+    //     headers:{
+    //       "Content-Type": "application/json",
+    //       "Authorization": token
+    //     }
+    //   })
+    //   setMessages((prev) => {
+    //     const newMsgs = [...prev];
+    //     const thinkingIndex = newMsgs.findIndex((msg) => msg.thinking);
+    //     if (thinkingIndex > -1) {
+    //       newMsgs[thinkingIndex] = data;
+    //     } else {
+    //       newMsgs.push(data);
+    //     }
+    //     return newMsgs;
+    //   });
+    // });
+    // fetchMessages()
+    // return () => {
+    //   channel.unbind_all();
+    //   channel.unsubscribe();
+    // };
   }, []);
 
-  const fetchMessages = async() =>{
-    try {
-      let userId='qwss0dosb'
-      let prospectId='67c71cb736cf73532106b589'
-      let token=localStorage.getItem('authToken')
-      const res = await axios.get(`/api/chatbot/history?userId=${userId}&&prospectId=${prospectId}`,{
-        headers:{
-          Authorization:'Bearer '+token,
-          "Content-Type": "application/json",
-        } 
-      });
-      const data = res.data.data;
-      const allMessages = data.flatMap(chat => chat.transcript);
-      allMessages.sort((a, b) => new Date(a.time_unix) - new Date(b.time_unix));
-      setMessages(allMessages);
-    } catch (err) {
-      console.error("Failed to load chat history:", err);
-      setMessages([]);
-    }
-  }
+//   const fetchMessages = async() =>{
+//     try {
+//       let userId='qwss0dosb'
+//       let prospectId='67c71cb736cf73532106b589'
+//       let token=localStorage.getItem('authToken')
+//       const res = await axios.get(`/api/chatbot/history?userId=${userId}&&prospectId=${prospectId}`,{
+//         headers:{
+//           Authorization:'Bearer '+token,
+//           "Content-Type": "application/json",
+//         } 
+//       });
+//       const data = res.data.data;
+//       const allMessages = data.flatMap(chat => chat.transcript);
+//       allMessages.sort((a, b) => new Date(a.time_unix) - new Date(b.time_unix));
+//       setMessages(allMessages);
+//     } catch (err) {
+//       console.error("Failed to load chat history:", err);
+//       setMessages([]);
+//     }
+//   }
 
   function getFormattedTimestamp() {
     const now = new Date();
@@ -73,19 +74,19 @@ export default function ChatWidget() {
     return `${date} ${time}`;
   }
 
-  const getBadgeLabel = (timestamp) => {
-    const parsed = new Date(timestamp);
+//   const getBadgeLabel = (timestamp) => {
+//     const parsed = new Date(timestamp);
   
-    if (isToday(parsed)) {
-      return "Today";
-    }
+//     if (isToday(parsed)) {
+//       return "Today";
+//     }
   
-    if (isThisWeek(parsed, { weekStartsOn: 1 })) {
-      return parsed.toLocaleDateString("en-US", { weekday: "long" }); // e.g., "Tuesday"
-    }
+//     if (isThisWeek(parsed, { weekStartsOn: 1 })) {
+//       return parsed.toLocaleDateString("en-US", { weekday: "long" }); // e.g., "Tuesday"
+//     }
   
-    return parsed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  };
+//     return parsed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+//   };
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -141,12 +142,18 @@ export default function ChatWidget() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 w-96 h-[500px] bg-white shadow-2xl rounded-xl flex flex-col border border-gray-300">
+    <div className="bottom-4 right-4 w-100 h-[200px] bg-white shadow-2xl rounded-xl flex flex-col border border-gray-300 mt-4">
       {/* Header */}
-      <div className="flex justify-between items-center bg-blue-600 text-white px-4 py-2 rounded-t-xl">
-        <h2 className="font-semibold text-lg">ChatBot</h2>
-        <button onClick={() => setIsOpen(false)} className="text-white text-xl font-bold hover:text-gray-200">&times;</button>
+      <div className="flex justify-center items-center bg-blue-600 text-white px-4 py-2 rounded-t-xl">
+        <Image 
+            src={agentDataProps.avatar} 
+            alt="Avatar" 
+            width={50} 
+            height={50} 
+            className="rounded-full mb-4 mt-2"
+        />
       </div>
+
 
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
@@ -228,5 +235,5 @@ export default function ChatWidget() {
         </button>
       </div>
     </div>
-  );
+  )
 }
