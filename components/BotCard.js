@@ -126,7 +126,6 @@ export default function BotCard({agentDataProps,isVoiceMode,onModeChange}) {
         <>
       <ScrollArea className="flex-1 p-4">
       <div className="flex flex-col items-center justify-center space-y-6 pt-20">
-        <h2 className="text-lg font-semibold text-gray-900">Voice Chat</h2>
           <div className="flex flex-col items-center">
               <Avatar className="h-32 w-32">
                 <AvatarImage src={agentDataProps.avatar} alt={agentDataProps.name} />

@@ -1,14 +1,8 @@
 import { useState, useEffect } from "react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarProvider
-} from "@/components/ui/sidebar";
 import AgentList from "./AgentList";
 import ChatInterface from "./Chatinterface";
 import axios from 'axios';
-// import BotCard from './BotCard';
+import BotCard from '../BotCard';
 // import BotButton from './Bot';
 // import ViewAgentComponent from './Prospect/ViewAgent';
 // import ChatBot from './Chatbot/index'
