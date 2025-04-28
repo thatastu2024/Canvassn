@@ -4,7 +4,6 @@ import { io } from "socket.io-client";
 import { isToday, isThisWeek, parse } from 'date-fns';
 import Pusher from "pusher-js";
 
-// const socket = io(process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_SOCKET_SERVER_URL : "http://localhost:3000", { path: "/api/socket" });
 
 export default function ChatWidget() {
   const [messages, setMessages] = useState([]);

@@ -76,7 +76,7 @@ const ChatInterface = ({ selectedAgent }) => {
 
     setWaitingForBot(true);
 
-    const res = await axios.get("https://n8n.canvassn.co.in/webhook/chatbot", {
+    const res = await axios.get("https://n8n.canvassn.co.in/webhook/surajfire", {
       params: {
         query: input
       },
