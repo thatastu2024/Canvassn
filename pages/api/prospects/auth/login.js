@@ -1,9 +1,10 @@
-import Prospects from "../../../models/Prospects";
-import connectDB from "../../../lib/mongodb";
+import Prospects from "../../../../models/Prospects";
+import connectDB from "../../../../lib/mongodb";
 import Joi from "joi";
-import ChatAgents from "../../../models/ChatAgents";
-import { generateToken } from "../../../utils/jwt";
-import authMiddleware from "../../../middleware/authMiddleware";
+// import ChatAgents from "../../../models/ChatAgents";
+import { generateToken } from "../../../../utils/jwt";
+import bcrypt from 'bcryptjs'
+// import authMiddleware from "../../../middleware/authMiddleware";
 import Cors from "cors";
 
 const cors = Cors({
@@ -51,9 +52,9 @@ export default async function handler(req, res) {
             }else{
                 let checkUserExists = await Prospects.findOne({
                     email:requestBody.prospect_email
-                }).lean()
+                }).lean()         
                 if(checkUserExists !== null && checkUserExists.hasOwnProperty('_id')){
-                    const isMatch = await comparePassword(password,adminUser.password);
+                    const isMatch = await bcrypt.compare(requestBody.password,checkUserExists.password);
                     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
                     const token = generateToken(checkUserExists)
                     return res.status(201).json({ success: true, message: "Prospect Authenticated Successfully",data:{
