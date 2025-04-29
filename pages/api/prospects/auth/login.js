@@ -50,17 +50,15 @@ export default async function handler(req, res) {
                 const message = details.map(i => i.message).join(', ');
                 return res.status(422).json({ success: true, message: message});
             }else{
-                let checkUserExists = await Prospects.findOne({
+                let userDetails = await Prospects.findOne({
                     email:requestBody.prospect_email
                 }).lean()         
-                if(checkUserExists !== null && checkUserExists.hasOwnProperty('_id')){
-                    const isMatch = await bcrypt.compare(requestBody.password,checkUserExists.password);
+                if(userDetails !== null && userDetails.hasOwnProperty('_id')){
+                    const isMatch = await bcrypt.compare(requestBody.password,userDetails.password);
                     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
-                    const token = generateToken(checkUserExists)
-                    return res.status(201).json({ success: true, message: "Prospect Authenticated Successfully",data:{
-                        prospect_id:checkUserExists._id,
-                        prospectToken:token
-                    }});
+                    const token = generateToken(userDetails)
+                    userDetails.authToken=token
+                    return res.status(201).json({ success: true, message: "Prospect Authenticated Successfully",userDetails});
                 }
             }
         } catch (error) {
