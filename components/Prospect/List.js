@@ -1,4 +1,4 @@
-import  {React, useState, useEffect } from "react";
+import  {React, useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import {formatDateTime} from '../../utils/dateUtil'
 import { faArrowDown,faArrowUp} from "@fortawesome/free-solid-svg-icons";
@@ -9,6 +9,7 @@ export default function ProspectList() {
   const [error, setError] = useState("");
   const [prospects,setProspects] = useState();
   const [loading, setLoading] = useState(true);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     fetchData()
@@ -44,6 +45,34 @@ export default function ProspectList() {
         setLoading(false);
       }
   };
+
+  const handleFileChange = (e) => {
+    inputRef.current.click();
+  };
+
+  const handleUpload = async (e) => {
+    const file = e.target.files;
+    console.log(file)
+    // if (!file) return alert("Please select a file first");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      console.log("Response from server:", data);
+      alert("Upload successful!");
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Upload failed!");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -62,6 +91,40 @@ export default function ProspectList() {
         </div>
         <div className="overflow-x-auto">
           <div className="flex justify-end mb-4">
+            
+          <div className="flex items-center justify-center">
+            <label
+              onClick={handleUpload}
+              className="flex flex-col items-center justify-center w-10 h-10 border-2 border-gray-300 border-dashed rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600"
+            >
+              <div className="flex flex-col items-center justify-center px-2 pt-2 pb-2">
+                <svg
+                  className="w-6 h-6 mb-2 text-gray-500 dark:text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 16"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                  />
+                </svg>
+              </div>
+              <input
+                ref={inputRef}
+                type="file"
+                className="hidden"
+                onChange={handleFileChange}
+                accept=".xlsx, .xls"
+                id="dropzone-file"
+              />
+            </label>
+          </div> 
+
             <label className="px-6 py-2 text-lg font-medium text-gray-700">Search</label>
             <input className="border rounded px-6 py-2 text-gray-600 mr-2" type="text" onKeyUp={e=>{fetchData('search',e.target.value)}}>
             </input>

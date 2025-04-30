@@ -6,7 +6,7 @@ async function handler(req, res) {
     if (req.method === "GET") {
         await connectDB();
         try {
-            const agents = await ChatAgent.find({},"_id, name agent_id");
+            const agents = await ChatAgent.find({},"_id, name agent_id agent_type");
             return res.status(200).json({ success: true, data: agents });
         } catch (error) {
             return res.status(500).json({ success: false, error: error.message });

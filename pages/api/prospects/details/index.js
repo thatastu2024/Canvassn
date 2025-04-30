@@ -5,9 +5,8 @@ import jwt from "jsonwebtoken";
 
 
 async function handler(req, res) {
-
+  await connectDB();
     if (req.method === "GET") {
-      await connectDB();
       try {
         let paramsData=req.query
         const decoded = jwt.verify(paramsData.token, process.env.JWT_SECRET);

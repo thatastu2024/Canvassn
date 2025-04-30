@@ -7,7 +7,8 @@ const ProspectSchema = new mongoose.Schema(
     prospect_email: { type: String, required: true, unique: true },
     prospect_location: { type: String, required: false },
     customer_id: { type: mongoose.Schema.Types.ObjectId, ref: "AdminUser", required: true },
-    status: { type: String, enum: ["active", "deactivated"], required: false }
+    status: { type: String, enum: ["active", "deactivated"], required: false },
+    password: { type: String, required: false }
   },
   { timestamps: true }
 );

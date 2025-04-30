@@ -1,6 +1,8 @@
 // pages/api/pusher.js
 import Pusher from "pusher";
 
+import authMiddleware from "../../middleware/authMiddleware";
+
 const pusher = new Pusher({
     appId: "1977222",
     key: "49dd9dac8eb95ca3a38a",
@@ -9,7 +11,7 @@ const pusher = new Pusher({
     useTLS: true
 });
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method === "POST") {
     const { channel, event, data } = req.body;
 
@@ -19,3 +21,5 @@ export default async function handler(req, res) {
     res.status(405).end("Method Not Allowed");
   }
 }
+
+export default authMiddleware(handler)
