@@ -50,9 +50,11 @@ export default async function handler(req, res) {
                 const message = details.map(i => i.message).join(', ');
                 return res.status(422).json({ success: true, message: message});
             }else{
+                console.log(requestBody)
                 let userDetails = await Prospects.findOne({
-                    email:requestBody.prospect_email
-                }).lean()         
+                    prospect_email:requestBody.email
+                }).lean()  
+                console.log(userDetails)       
                 if(userDetails !== null && userDetails.hasOwnProperty('_id')){
                     const isMatch = await bcrypt.compare(requestBody.password,userDetails.password);
                     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
