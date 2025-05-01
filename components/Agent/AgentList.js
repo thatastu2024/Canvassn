@@ -8,7 +8,6 @@ import { User } from "lucide-react";
 
 
 const AgentList = ({ agents, selectedAgent, onSelectAgent }) => {
-  {console.log(agents)}
   return (
     <ScrollArea className="h-[calc(100vh-120px)]">
        <div className="space-y-2 p-4">

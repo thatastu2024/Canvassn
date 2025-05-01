@@ -15,7 +15,7 @@ async function handler(req, res) {
         const filter = {};
         if (userId) filter.user_unique_id = userId;
         if (decoded.id) filter.prospect_id = decoded?.id;
-        let chatHistory = await ChatHistory.find(filter,"transcript createdAt").sort({ createdAt: 1 })
+        let chatHistory = await ChatHistory.find(filter,"transcript createdAt").sort({ createdAt: -1 })
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         const filteredChats = chatHistory.filter(chat => {
