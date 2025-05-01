@@ -24,7 +24,8 @@ async function handler(req, res) {
         })
         .map(chat => ({
           chatId: chat._id,
-          timeBadge: getTimeBadge(chat.createdAt)
+          timeBadge: getTimeBadge(chat.createdAt),
+          selected: getTimeBadge(chat.createdAt).toLocaleLowerCase() === "today" ? true : false
         }));
         return res.status(200).json({ success: true,message:"Chat history fetched successfully",filteredChats});
       } catch (error) {
