@@ -1,14 +1,115 @@
 import Conversation from "../../../models/Conversations";
 import connectDB from "../../../lib/mongodb";
 import ChatAgents from "../../../models/ChatAgents";
+import ChatHistory from "@/models/ChatHistory";
 import authMiddleware from "../../../middleware/authMiddleware";
+import jwt from "jsonwebtoken";
 async function handler(req, res) {
-
+  await connectDB();
     if (req.method === "GET") {
-      await connectDB();
         try {
-          let conversations = await Conversation.find({},'_id agent_id agent_name status conversation_id call_duration_secs call_successful start_time_unix_secs transcript').sort({createdAt : -1})
-          return res.status(200).json({ success: true, data: conversations });
+          const authHeader=req.headers.authorization;
+          const token = authHeader.replace("Bearer ", "");
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          let filter={}
+          if(decoded.user_type === "admin"){
+            if(req?.query?.type === "voice"){
+              let agentData = await ChatAgents.find({
+                customer_id:decoded.id
+              },'_id agent_id agent_type')
+              if(agentData.length){
+                const filteredAgentIds = agentData
+                .filter(item => item.type === "voice" || item.type === "both")
+                .map(item => item.user_id);
+                filter={
+                  ...filter,
+                  agent_id:{
+                    $in:filteredAgentIds
+                  }
+                }
+              }
+              let conversations = await Conversation.find(filter,'_id agent_id agent_name status conversation_id call_duration_secs call_successful start_time_unix_secs transcript').sort({createdAt : -1})
+              return res.status(200).json({ success: true, data: conversations });
+            }
+            if(req?.query?.type === "chat"){
+              const chatHistory = await ChatHistory.aggregate([
+                {
+                  $match: {
+                    user_unique_id: decoded.user_unique_token
+                  }
+                },
+                {
+                  $lookup: {
+                    from: 'prospects',
+                    localField: 'prospect_id',
+                    foreignField: '_id',
+                    as: 'prospect'
+                  }
+                },
+                {
+                  $unwind: {
+                    path: '$prospect',
+                    preserveNullAndEmptyArrays: true
+                  }
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    session_id: 1,
+                    transcript: 1,
+                    prospect: 1,
+                    total_message_exchange: 1,
+                    createdAt: 1,
+                    prospect: {
+                      _id: '$prospect._id',
+                      name: '$prospect.prospect_name'
+                    }
+                  }
+                }
+              ]);
+              
+              return res.status(200).json({ success: true, data: chatHistory });
+            }
+          }
+          if(decoded.user_type === "superadmin"){
+            if(req?.query?.type === "voice"){
+              let conversations = await Conversation.find(filter,'_id agent_id agent_name status conversation_id call_duration_secs call_successful start_time_unix_secs transcript').sort({createdAt : -1})
+              return res.status(200).json({ success: true, data: conversations });
+            }
+            if(req?.query?.type === "chat"){
+              const chatHistory = await ChatHistory.aggregate([
+                {
+                  $lookup: {
+                    from: 'prospects',
+                    localField: 'prospect_id',
+                    foreignField: '_id',
+                    as: 'prospect'
+                  }
+                },
+                {
+                  $unwind: {
+                    path: '$prospect',
+                    preserveNullAndEmptyArrays: true
+                  }
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    session_id: 1,
+                    transcript: 1,
+                    prospect: 1,
+                    total_message_exchange: 1,
+                    createdAt: 1,
+                    prospect: {
+                      _id: '$prospect._id',
+                      name: '$prospect.prospect_name'
+                    }
+                  }
+                }
+              ]);
+              return res.status(200).json({ success: true, data:chatHistory });
+            }
+          }
         } catch (error) {
           console.log(error)
           return res.status(500).json({ success: false, error: error.message });

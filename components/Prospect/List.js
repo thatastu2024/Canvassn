@@ -3,7 +3,7 @@ import axios from 'axios';
 import {formatDateTime} from '../../utils/dateUtil'
 import { faArrowDown,faArrowUp} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { Input } from "postcss";
+import { Card } from "@/components/ui/card";
 
 export default function ProspectList() {
   const [error, setError] = useState("");
@@ -82,7 +82,13 @@ export default function ProspectList() {
   }
 
   if(!prospects?.length === 0 || prospects === undefined){
-    return <p className="text-gray-500 p-4">No data found.</p>;
+    return <div className="flex h-full items-center justify-center">
+    <Card className="p-6">
+      <h2 className="text-xl font-semibold text-gray-500">
+        No Leads Found
+      </h2>
+    </Card>
+  </div>;
   }
   return (
     <>

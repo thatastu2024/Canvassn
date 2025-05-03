@@ -5,6 +5,7 @@ import ChatAgents from "../../../models/ChatAgents";
 import { generateToken } from "../../../utils/jwt";
 import authMiddleware from "../../../middleware/authMiddleware";
 import Cors from "cors";
+import jwt from "jsonwebtoken";
 
 const cors = Cors({
     origin: "*", // Change to your frontend URL in production
@@ -40,6 +41,15 @@ export default async function handler(req, res) {
         let paramsData=req.query
         let filterData={};
         let sortData={  };
+        const authHeader=req.headers.authorization;
+        const token = authHeader.replace("Bearer ", "");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if(decoded.user_type === "admin"){
+            filterData={
+                ...filterData,
+            _id:decoded.id
+        }
+        }
         if(paramsData.filterField === "search"){
             console.log("Inside")
             filterData = {
@@ -54,7 +64,8 @@ export default async function handler(req, res) {
                 [paramsData.filterField] : parseInt(paramsData.filterValue)
             }
         }
-        const prospects = await Prospects.find({},"_id, prospect_name prospect_email prospect_location createdAt").sort(sortData);
+        console.log(filterData)
+        const prospects = await Prospects.find(filterData,"_id, prospect_name prospect_email prospect_location createdAt").sort(sortData);
         return res.status(200).json({ success: true, data: prospects });
       } catch (error) {
         return res.status(500).json({ success: false, error: error.message });

@@ -1,6 +1,5 @@
 import connectDB from "../../../../../lib/mongodb";
 import authMiddleware from "../../../../../middleware/authMiddleware";
-import jwt from "jsonwebtoken";
 import ChatHistory from "../../../../../models/ChatHistory";
 
 

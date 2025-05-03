@@ -1,7 +1,6 @@
 import ChatHistory from "../../../../models/ChatHistory";
 import connectDB from "../../../../lib/mongodb";
 import authMiddleware from "../../../../middleware/authMiddleware";
-import { isToday, isThisWeek, parse } from 'date-fns';
 import {jwtDecode} from "jwt-decode";
 async function handler(req, res) {
     await connectDB();

@@ -1,7 +1,16 @@
 import Link from 'next/link';
 import { useState,useEffect } from 'react';
-import { FaRobot, FaHistory, FaBook, FaPhone, FaUser , FaCog } from "react-icons/fa";
 import { useRouter } from "next/router";
+import { 
+  Gauge,
+  BrainCircuit,
+  FileUser,
+  History,
+  LibraryBig,
+  User,
+  Settings2
+ } from 'lucide-react';
+
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
@@ -45,13 +54,13 @@ export default function Sidebar() {
   };
 
   const routes=[
-    { id:1, name: "Dashboard", icon: <FaRobot />, path: "/dashboard",allowed:["superadmin"]},
-    { id:2, name: "Agents", icon: <FaRobot />, path: "/agents", allowed:["superadmin","admin","employee"] },
-    { id:3, name: "Call History", icon: <FaHistory />, path: "/conversations", allowed:["superadmin","admin","employee"] },
-    { id:4, name: "Leads", icon: <FaHistory />, path: "/prospects", allowed:["superadmin","admin","employee"] },
-    { id:5, name: "Knowledge Base", icon: <FaBook />, path: "/knowledge-base", allowed:["superadmin"] },
-    { id:6, name: "Users", icon: <FaUser />, path: "/users", allowed:["superadmin"] },
-    { id:7, name: "Settings", icon: <FaCog />, path: "/settings",allowed:["superadmin"] },
+    { id:1, name: "Dashboard", icon: <Gauge />, path: "/dashboard",allowed:["superadmin"]},
+    { id:2, name: "Agents", icon: <BrainCircuit />, path: "/agents", allowed:["superadmin","admin","employee"] },
+    { id:3, name: "History", icon: <History />, path: "/conversations", allowed:["superadmin","admin","employee"] },
+    { id:4, name: "Leads", icon: <FileUser />, path: "/prospects", allowed:["superadmin","admin","employee"] },
+    { id:5, name: "Knowledge Base", icon: <LibraryBig />, path: "/knowledge-base", allowed:["superadmin"] },
+    { id:6, name: "Users", icon: <User />, path: "/users", allowed:["superadmin"] },
+    { id:7, name: "Settings", icon: <Settings2 />, path: "/settings",allowed:["superadmin"] },
   ]
 
   return (

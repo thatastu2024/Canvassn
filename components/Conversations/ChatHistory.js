@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments, faCommentDots, faClock, faRefresh, faEye } from "@fortawesome/free-solid-svg-icons";
-import {formatHumanReadableDate,formatTime} from '../utils/dateUtil'
-import ConversationDetail from './ConversationDetail'
-export default function ConversationsListComponent() {
+import {formatHumanReadableDate,formatTime} from '../../utils/dateUtil'
+import ConversationDetail from '../ConversationDetail'
+import { Card } from "@/components/ui/card";
+export default function ChatHistoryComponent(data) {
   const [conversations,setConversations] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,13 +15,7 @@ export default function ConversationsListComponent() {
       const fetchData = async () => {
           try {
           let token=localStorage.getItem('token')
-          await axios.get('/api/webhook',{
-            headers:{
-                Authorization:'Bearer '+token,
-                "Content-Type": "application/json",
-            }
-          })
-          const response = await axios.get('/api/bot',{
+          const response = await axios.get('/api/bot?type=chat',{
               headers:{
                   Authorization:'Bearer '+token,
                   "Content-Type": "application/json",
@@ -49,7 +44,15 @@ export default function ConversationsListComponent() {
   }
   
   if(!conversations?.length === 0 || conversations === undefined){
-    return <p className="text-gray-500 p-4">No data found.</p>;
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold text-gray-500">
+            No Call History Found
+          </h2>
+        </Card>
+      </div>
+    );
   }
 
   const HandleSync = async () =>{
@@ -61,7 +64,7 @@ export default function ConversationsListComponent() {
             "Content-Type": "application/json",
         }
       })
-      const response = await axios.get('/api/bot',{
+      const response = await axios.get('/api/bot?type=chat',{
           headers:{
               Authorization:'Bearer '+token,
               "Content-Type": "application/json",
@@ -81,9 +84,6 @@ export default function ConversationsListComponent() {
 
   return (
     <>
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Conversation History</h2>
-    </div>
     <div className="overflow-x-auto">
       <div className="flex justify-end mb-4">
         <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition mr-2" onClick={HandleSync}>Refresh</button>

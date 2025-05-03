@@ -13,7 +13,8 @@ const ChatHistorySchema = new mongoose.Schema(
     prospect_id:{
       type: mongoose.Schema.Types.ObjectId, ref: "Prospects", required: false
     },
-    total_message_exchange:{ type:String, required:false}
+    total_message_exchange:{ type:String, required:false},
+    agent_id: { type: String, required: true }
   },
   { timestamps: true }
 );

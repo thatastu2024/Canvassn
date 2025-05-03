@@ -2,13 +2,8 @@ import { useState, useEffect } from "react";
 import AgentList from "./AgentList";
 import ChatInterface from "./Chatinterface";
 import axios from 'axios';
-import BotCard from '../BotCard';
-// import BotButton from './Bot';
-// import ViewAgentComponent from './Prospect/ViewAgent';
-// import ChatBot from './Chatbot/index'
-
-// Mock data for demonstration
-
+import { Card } from "@/components/ui/card";
+import { Button } from "../ui/button";
 export default function ChatBotIndex () {
     const [agents,setAgents] = useState();
     const [loading, setLoading] = useState(true);
@@ -21,7 +16,6 @@ export default function ChatBotIndex () {
       agent_type:"",
       status:"online"
     })
-    const [isSelected,setIsSelected] = useState(false)
 
     useEffect(()=>{
         const fetchData = async () => {
@@ -56,28 +50,47 @@ export default function ChatBotIndex () {
       );
     }
   
-    if(!agents?.length === 0 || agents === undefined){
-      return <p className="text-gray-500 p-4">No data found.</p>;
-    }
-
   return (
-    <div className="flex min-h-screen w-full">
-    <div className="w-64 border-r">
-      <div className="border-b px-4 py-6">
-        <h1 className="text-xl font-bold">AI Agents</h1>
+    <div className="flex flex-col min-h-screen w-full">
+      {/* Top Button */}
+      <div className="p-4 border-b flex justify-end">
+        <Button onClick={() => alert("Top Button Clicked")}>
+          New agent
+        </Button>
       </div>
-      <div className="h-[calc(100vh-88px)] overflow-auto">
-        <AgentList
-          agents={agents}
-          selectedAgent={selectedAgent}
-          onSelectAgent={setSelectedAgent}
-        />
+
+      <div className="flex flex-1">
+        {!agents?.length === 0 || agents === undefined ? (
+          <div className="flex flex-1 items-center justify-center">
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold text-gray-500">
+                No Agent Found
+              </h2>
+            </Card>
+          </div>
+        ) : (
+          <>
+            {/* Sidebar */}
+            <div className="w-64 border-r">
+              <div className="border-b px-4 py-6">
+                <h1 className="text-xl font-bold">AI Agents</h1>
+              </div>
+              <div className="h-[calc(100vh-136px)] overflow-auto">
+                <AgentList
+                  agents={agents}
+                  selectedAgent={selectedAgent}
+                  onSelectAgent={setSelectedAgent}
+                />
+              </div>
+            </div>
+
+            {/* Chat Interface */}
+            <main className="flex-1">
+              <ChatInterface selectedAgent={selectedAgent} />
+            </main>
+          </>
+        )}
       </div>
     </div>
-    
-    <main className="flex-1">
-      <ChatInterface selectedAgent={selectedAgent} />
-    </main>
-  </div>
-  );
+  )
 };

@@ -11,7 +11,7 @@ const AgentList = ({ agents, selectedAgent, onSelectAgent }) => {
   return (
     <ScrollArea className="h-[calc(100vh-120px)]">
        <div className="space-y-2 p-4">
-      {agents.map((agent) => (
+      {agents.length && agents.map((agent) => (
         <Card
           key={agent.id}
           className={`transition-colors hover:bg-accent ${
