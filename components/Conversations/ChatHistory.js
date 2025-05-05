@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComments, faCommentDots, faClock, faRefresh, faEye } from "@fortawesome/free-solid-svg-icons";
-import {formatHumanReadableDate,formatTime} from '../../utils/dateUtil'
-import ConversationDetail from '../ConversationDetail'
+import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
+import {newFormatDateTime} from '../../utils/dateUtil'
+import ChatDetail from './ChatDetails'
 import { Card } from "@/components/ui/card";
+import { Timer,Brain,MessageCircle,UserRound,Eye,MessageCircleMore } from 'lucide-react';
 export default function ChatHistoryComponent(data) {
-  const [conversations,setConversations] = useState();
+  const [chatHistory,setChatHistory] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -24,7 +25,7 @@ export default function ChatHistoryComponent(data) {
             if (!response.data.data.length) {
               throw new Error("Failed to fetch data");
             }
-            setConversations(response?.data?.data);
+            setChatHistory(response?.data?.data);
           } catch (error) {
             console.log(error)
             setError(error.message);
@@ -43,7 +44,7 @@ export default function ChatHistoryComponent(data) {
     );
   }
   
-  if(!conversations?.length === 0 || conversations === undefined){
+  if(!chatHistory?.length === 0 || chatHistory === undefined){
     return (
       <div className="flex h-full items-center justify-center">
         <Card className="p-6">
@@ -99,22 +100,28 @@ export default function ChatHistoryComponent(data) {
         <thead className="bg-gray-50">
           <tr>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Call happend At
+            <div className="flex items-center gap-1">
+              <Timer />
+              Chat happend At
+            </div>
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Agent
+              <div className="flex items-center gap-1">
+                <Brain/>
+                Agent
+              </div>
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Messages
+            <div className="flex items-center gap-1">
+              <MessageCircle/>
+              Messages
+             </div>
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Call Duration
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Status
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Re-process
+            <div className="flex items-center gap-1">
+              <UserRound></UserRound>
+              Prospect
+            </div>
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
             Action
@@ -122,25 +129,21 @@ export default function ChatHistoryComponent(data) {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-        {conversations.map((conversation, index) => (
+        {chatHistory.map((chat, index) => (
           <tr key={index} className="hover:bg-gray-100">
-            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><FontAwesomeIcon icon={faComments} /> {formatHumanReadableDate(conversation.start_time_unix_secs)}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{conversation.agent_name}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><FontAwesomeIcon icon={faCommentDots} /> {conversation.transcript ? conversation.transcript.length : 0}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><FontAwesomeIcon icon={faClock} /> {formatTime(conversation.call_duration_secs)}</td>
-            <td className={`px-6 py-4 whitespace-nowrap text-sm ${
-              conversation.status === "processing" ? "text-yellow-500" : "text-green-500"
-            }`}>{conversation.status}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{newFormatDateTime(chat.createdAt)}
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{chat.agent.name}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {
-                conversation.status === "processing" ?
-                <FontAwesomeIcon icon={faRefresh} />
-                :'success'
-              }</td>
+              <div className="flex items-center gap-1">
+                <MessageCircleMore /> {chat.total_message_exchange}
+              </div>
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{chat.prospect.name}</td>
             <td 
             className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
             onClick={() => setIsDetailModalOpen(true)}
-            ><FontAwesomeIcon icon={faEye} onClick={e=>{setConversationIdModel(conversation._id)}} /></td>
+            ><Eye onClick={e=>{setConversationIdModel(chat._id)}} /></td>
           </tr>
         ))}
         </tbody>
@@ -165,7 +168,7 @@ export default function ChatHistoryComponent(data) {
         </button> */}
       </div>
     </div>
-    <ConversationDetail isOpen={isDetailModalOpen} conversationDetailsId={conversationIdModel} onClose={() => setIsDetailModalOpen(false)}/>
+    <ChatDetail isOpen={isDetailModalOpen} conversationDetailsId={conversationIdModel} onClose={() => setIsDetailModalOpen(false)}/>
     </>
   );
 }

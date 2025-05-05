@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import axios from 'axios';
 import { faEnvelope,faPlay,faPause,faArrowLeft,faArrowRight,faDownload} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {formatDateTime,formatTime} from '../utils/dateUtil'
-import WaveFormAudio from './WaveForm'
+import {formatDateTime,formatTime} from '../../utils/dateUtil'
+import WaveFormAudio from '../WaveForm'
 
 const ConversationDetail = ({ isOpen, onClose, conversationDetailsId }) => {
     const [activeTab, setActiveTab] = useState("overview");

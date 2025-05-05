@@ -34,8 +34,10 @@ async function handler(req, res) {
             if(req?.query?.type === "chat"){
               const chatHistory = await ChatHistory.aggregate([
                 {
-                  $match: {
-                    user_unique_id: decoded.user_unique_token
+                  $addFields: {
+                    agentObjectId: {
+                      $toObjectId: '$agent_id'
+                    }
                   }
                 },
                 {
@@ -53,16 +55,33 @@ async function handler(req, res) {
                   }
                 },
                 {
+                  $lookup: {
+                    from: 'chatagents',
+                    localField: 'agentObjectId',
+                    foreignField: '_id',
+                    as: 'agent'
+                  }
+                },
+                {
+                  $unwind: {
+                    path: '$agent',
+                    preserveNullAndEmptyArrays: true
+                  }
+                },
+                {
                   $project: {
                     _id: 1,
                     session_id: 1,
-                    transcript: 1,
                     prospect: 1,
                     total_message_exchange: 1,
                     createdAt: 1,
                     prospect: {
                       _id: '$prospect._id',
                       name: '$prospect.prospect_name'
+                    },
+                    agent: {
+                      _id: '$agent._id',
+                      name: '$agent.name' // change this if your field is different
                     }
                   }
                 }
@@ -77,7 +96,15 @@ async function handler(req, res) {
               return res.status(200).json({ success: true, data: conversations });
             }
             if(req?.query?.type === "chat"){
+
               const chatHistory = await ChatHistory.aggregate([
+                {
+                  $addFields: {
+                    agentObjectId: {
+                      $toObjectId: '$agent_id'
+                    }
+                  }
+                },
                 {
                   $lookup: {
                     from: 'prospects',
@@ -93,20 +120,39 @@ async function handler(req, res) {
                   }
                 },
                 {
+                  $lookup: {
+                    from: 'chatagents',
+                    localField: 'agentObjectId',
+                    foreignField: '_id',
+                    as: 'agent'
+                  }
+                },
+                {
+                  $unwind: {
+                    path: '$agent',
+                    preserveNullAndEmptyArrays: true
+                  }
+                },
+                {
                   $project: {
                     _id: 1,
                     session_id: 1,
-                    transcript: 1,
                     prospect: 1,
                     total_message_exchange: 1,
                     createdAt: 1,
                     prospect: {
                       _id: '$prospect._id',
                       name: '$prospect.prospect_name'
+                    },
+                    agent: {
+                      _id: '$agent._id',
+                      name: '$agent.name' // change this if your field is different
                     }
                   }
                 }
               ]);
+              console.log(chatHistory)              
+  
               return res.status(200).json({ success: true, data:chatHistory });
             }
           }

@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments, faCommentDots, faClock, faRefresh, faEye } from "@fortawesome/free-solid-svg-icons";
-import {formatHumanReadableDate,formatTime} from '../../utils/dateUtil'
-import ConversationDetail from '../ConversationDetail'
+import {formatHumanReadableDate,formatTime,formatDateTime} from '../../utils/dateUtil'
+import ConversationDetail from './ConversationDetail'
 import { Card } from "@/components/ui/card";
 export default function ConversationsListComponent(data) {
   const [conversations,setConversations] = useState();
