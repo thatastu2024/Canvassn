@@ -31,8 +31,19 @@ async function handler(req, res) {
               let conversations = await Conversation.find(filter,'_id agent_id agent_name status conversation_id call_duration_secs call_successful start_time_unix_secs transcript').sort({createdAt : -1})
               return res.status(200).json({ success: true, data: conversations });
             }
+            let filter = {};
             if(req?.query?.type === "chat"){
+              if(req?.query?.agentId && req?.query?.agentId.toLowerCase() !== "all"){
+                filter={
+                  agent_id:req?.query?.agentId
+                }
+              }
+              
+              const matchStage = {
+                ...(filter.agent_id ? { agent_id: filter.agent_id } : {})
+              };
               const chatHistory = await ChatHistory.aggregate([
+                { $match: matchStage },
                 {
                   $addFields: {
                     agentObjectId: {
@@ -81,8 +92,13 @@ async function handler(req, res) {
                     },
                     agent: {
                       _id: '$agent._id',
-                      name: '$agent.name' // change this if your field is different
+                      name: '$agent.name'
                     }
+                  }
+                },
+                {
+                  $sort: {
+                    createdAt: -1
                   }
                 }
               ]);
@@ -96,8 +112,18 @@ async function handler(req, res) {
               return res.status(200).json({ success: true, data: conversations });
             }
             if(req?.query?.type === "chat"){
-
+              let filter = {};
+                if(req?.query?.agentId && req?.query?.agentId.toLowerCase() !== "all"){
+                  filter={
+                    agent_id:req?.query?.agentId
+                  }
+                }
+                
+                const matchStage = {
+                  ...(filter.agent_id ? { agent_id: filter.agent_id } : {})
+                };
               const chatHistory = await ChatHistory.aggregate([
+                { $match: matchStage },
                 {
                   $addFields: {
                     agentObjectId: {
@@ -146,8 +172,13 @@ async function handler(req, res) {
                     },
                     agent: {
                       _id: '$agent._id',
-                      name: '$agent.name' // change this if your field is different
+                      name: '$agent.name'
                     }
+                  }
+                },
+                {
+                  $sort: {
+                    createdAt: -1 
                   }
                 }
               ]);

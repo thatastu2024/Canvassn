@@ -12,30 +12,45 @@ export default function ChatHistoryComponent(data) {
   const [error, setError] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [conversationIdModel,setConversationIdModel] = useState()
+  const [agentData, setAgentData] = useState([])
   useEffect(()=>{
-      const fetchData = async () => {
-          try {
-          let token=localStorage.getItem('token')
-          const response = await axios.get('/api/bot?type=chat',{
-              headers:{
-                  Authorization:'Bearer '+token,
-                  "Content-Type": "application/json",
-              }
-          })
-            if (!response.data.data.length) {
-              throw new Error("Failed to fetch data");
-            }
-            setChatHistory(response?.data?.data);
-          } catch (error) {
-            console.log(error)
-            setError(error.message);
-          } finally {
-            setLoading(false);
-          }
-      };
-      fetchData()
+      fetchData("All")
+      fetchAgents()
   },[])
-
+    const fetchData = async (agentId) => {
+      try {
+      let token=localStorage.getItem('token')
+      const response = await axios.get('/api/bot?type=chat&agentId='+agentId,{
+          headers:{
+              Authorization:'Bearer '+token,
+              "Content-Type": "application/json",
+          }
+      })
+        if (!response.data.data.length) {
+          throw new Error("Failed to fetch data");
+        }
+        setChatHistory(response?.data?.data);
+      } catch (error) {
+        console.log(error)
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+  };
+  const fetchAgents = async() =>{
+        try{
+          let token=localStorage.getItem('token')
+          const agentData = await axios.get('/api/chatagent/util',{
+            headers:{
+                Authorization:`Bearer ${token}`,
+                "Content-Type": "application/json",
+            }
+          })
+          setAgentData(agentData?.data?.data)
+        }catch(error){
+          console.log(error)
+        }
+      }
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -56,44 +71,16 @@ export default function ChatHistoryComponent(data) {
     );
   }
 
-  const HandleSync = async () =>{
-    try {
-      let token=localStorage.getItem('token')
-      await axios.get('/api/webhook',{
-        headers:{
-            Authorization:'Bearer '+token,
-            "Content-Type": "application/json",
-        }
-      })
-      const response = await axios.get('/api/bot?type=chat',{
-          headers:{
-              Authorization:'Bearer '+token,
-              "Content-Type": "application/json",
-          }
-      })
-        if (!response.data.data.length) {
-          throw new Error("Failed to fetch data");
-        }
-        setConversations(response?.data?.data);
-    } catch (error) {
-      console.log(error)
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
     <>
     <div className="overflow-x-auto">
       <div className="flex justify-end mb-4">
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition mr-2" onClick={HandleSync}>Refresh</button>
-        <select className="border rounded px-6 py-2 text-gray-600 mr-2">
-          <option>Success</option>
-          <option>Failed</option>
-        </select>
-        <select className="border rounded px-3 py-2 text-gray-600">
-          <option>All agents</option>
+        <select name="agent" className="border rounded px-3 py-2 text-gray-600" onChange={(e)=>fetchData(e.target.value)}>
+          <option value="">Select agent</option>
+          <option value="">All</option>
+          {agentData.map((agent) => (
+            <option key={agent.agent_id || agent._id} value={agent.agent_id || agent._id}>{agent.name} - {agent.agent_type}</option>
+          ))}
         </select>
       </div>
       <table className="min-w-full divide-y divide-gray-200">
@@ -129,7 +116,7 @@ export default function ChatHistoryComponent(data) {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-        {chatHistory.map((chat, index) => (
+        { chatHistory.map((chat, index) => (
           <tr key={index} className="hover:bg-gray-100">
             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{newFormatDateTime(chat.createdAt)}
             </td>

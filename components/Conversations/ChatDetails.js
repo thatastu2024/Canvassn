@@ -1,16 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import axios from 'axios';
-import { faEnvelope,faPlay,faPause,faArrowLeft,faArrowRight,faDownload} from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {formatDateTime,formatTime} from '../../utils/dateUtil'
-import WaveFormAudio from '../WaveForm'
 
 const ChatDetail = ({ isOpen, onClose, conversationDetailsId }) => {
-    const [activeTab, setActiveTab] = useState("overview");
-    const [conversationDetail,setConversationDetail] = useState({})
-    const [audioSrc, setAudioSrc] = useState(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const audioRef = useRef(null);
+  console.log(conversationDetailsId)
+    const [activeTab, setActiveTab] = useState("transcription");
+    const [chatHistory,setChatHistory] = useState({})
     useEffect(()=>{
         if(isOpen){
             fetchConversationDetailById(conversationDetailsId)
@@ -20,21 +16,17 @@ const ChatDetail = ({ isOpen, onClose, conversationDetailsId }) => {
     const fetchConversationDetailById = async (id) =>{
       try{
         let token=localStorage.getItem('token')
-        const response=await axios.get('/api/bot/show/'+id,{
+        const response=await axios.get('/api/bot/show/'+id+'?type=chat',{
             headers:{
                 Authorization:'Bearer '+token,
                 "Content-Type": "application/json",
             }
         })
-        setConversationDetail(response?.data?.data)
-        if(response){
-          fetchRecording(response?.data?.data?.conversation_id)
-        }
+        setChatHistory(response?.data?.chatHisotryDetails)
       }catch(error){
         console.log(error)
       }
     }
-
   return (
     <div
       className={`fixed top-0 right-0 h-full w-[75%] bg-white shadow-lg transform transition-transform duration-300 ${
@@ -42,7 +34,7 @@ const ChatDetail = ({ isOpen, onClose, conversationDetailsId }) => {
       }`}
     >
       <div className="p-4 flex justify-between items-center border-b">
-        <h2 className="text-xl font-semibold">Conversation with  {conversationDetail?.agent_name}</h2>
+        <h2 className="text-xl font-semibold">Conversation with  {chatHistory?.agentData?.name}</h2>
         <button className="text-red-500 text-lg" onClick={onClose}>
           ✖
         </button>
@@ -57,14 +49,14 @@ const ChatDetail = ({ isOpen, onClose, conversationDetailsId }) => {
                 />
             </div>
             <div className="space-y-1">
-            <div className="text-lg font-semibold">{conversationDetail?.prospectData?.prospect_name}</div>
-            <div className="text-gray-600"><FontAwesomeIcon icon={faEnvelope}/> {conversationDetail?.prospectData?.prospect_email}</div>
-            <div className="text-gray-600">📍 {conversationDetail?.prospectData?.prospect_location}</div>
+            <div className="text-lg font-semibold">{chatHistory?.prospectData?.prospect_name}</div>
+            <div className="text-gray-600"><FontAwesomeIcon icon={faEnvelope}/> {chatHistory?.prospectData?.prospect_email}</div>
+            <div className="text-gray-600">📍 {chatHistory?.prospectData?.prospect_location}</div>
           </div>
         </div>
         <div className="bg-white w-full flex flex-col">
             <div className="flex border-b">
-                {["overview", "messages"].map(
+                {["transcription"].map(
                 (tab) => (
                     <button
                     key={tab}
@@ -81,19 +73,11 @@ const ChatDetail = ({ isOpen, onClose, conversationDetailsId }) => {
                 )}
             </div>
             <div className="p-4 flex-grow overflow-auto">
-                {activeTab === "overview" && (
-                  <div className="grid grid-rows-4 gap-4 ">
-                    <div className="bg-white-100 p-4 rounded-lg shadow">
-                      <h3 className="text-lg font-semibold">Summary</h3>
-                      <p>{conversationDetail?.analysis?.transcript_summary}</p>
-                    </div>
-                </div>
-                )}
-                {activeTab === "messages" && (
+                {activeTab === "transcription" && (
                   <div className="p-4 h-[400px] overflow-y-auto bg-white-100 rounded-lg">
                     <h2 className="text-lg font-bold mb-2">Chat</h2>
                     <div className="flex flex-col space-y-3">
-                      {conversationDetail.transcript.map((msg, index) => (
+                      {chatHistory?.transcript?.map((msg, index) => (
                         <div key={index} className={`flex items-start w-full ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                           {msg.role === "user" && msg.message !== null && (
                             <div className="flex items-center space-x-2">
@@ -103,7 +87,7 @@ const ChatDetail = ({ isOpen, onClose, conversationDetailsId }) => {
                               <img src='/Men.webp' alt="User" className="w-8 h-8 rounded-full" />
                             </div>
                           )}
-                          {msg.role === "agent" && msg.message !== null && (
+                          {msg.role === "bot" && msg.message !== null && (
                             <div className="flex items-center space-x-2">
                               <img src='/Men.webp' alt="AI" className="w-8 h-8 rounded-full" />
                               <div className="bg-gray-300 text-black p-3 rounded-lg max-w-[75%]">

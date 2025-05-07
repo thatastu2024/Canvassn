@@ -20,7 +20,7 @@ const ConversationDetail = ({ isOpen, onClose, conversationDetailsId }) => {
     const fetchConversationDetailById = async (id) =>{
       try{
         let token=localStorage.getItem('token')
-        const response=await axios.get('/api/bot/show/'+id,{
+        const response=await axios.get('/api/bot/show/'+id+'?type=voice',{
             headers:{
                 Authorization:'Bearer '+token,
                 "Content-Type": "application/json",
