@@ -50,7 +50,8 @@ async function handler(req, res) {
                     }],
                     message: requestData.text,
                     session_id: sessionToken,
-                    total_message_exchange:1
+                    total_message_exchange:1,
+                    agent_id:requestData.agent_id
                 }
                 await ChatHistory.create(dataToSave)
                 return res.status(200).json({ success: true, message:"User chat saved successfully" });

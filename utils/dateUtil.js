@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 export const formatHumanReadableDate = (timestamp) => {
     const date = new Date(timestamp * 1000); // Convert Unix timestamp to milliseconds
     const now = new Date();
@@ -52,6 +53,11 @@ export const formatDateTime = (isoString) => {
     second: "2-digit",
     hour12: true, 
   }).replace(",", "").replace("/", "-").replace("/", "-");
+};
+
+
+export const newFormatDateTime = (isoString) => {
+  return format(new Date(isoString), 'd MMMM yyyy, HH:mm');
 };
 
   
