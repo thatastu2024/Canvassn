@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from "next/router";
-
+import {jwtDecode} from "jwt-decode";
 export default function Navbar() {
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -11,8 +11,15 @@ export default function Navbar() {
   };
 
   const logout = () =>{
-    localStorage.removeItem('token')
-    router.push("/login");
+    let token=localStorage.getItem("token");
+    const decoded = jwtDecode(token);
+    if(decoded.user_type === "admin"){
+      localStorage.removeItem('token')
+      router.push('/users/login');
+    } else {
+      localStorage.removeItem('token')
+      router.push("/login");
+    }
   }
 
   return (
