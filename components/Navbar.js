@@ -39,9 +39,9 @@ export default function Navbar() {
                 </button>
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20">
-                    <Link className="block px-4 py-2 text-gray-800 hover:bg-gray-200" href="/profile">
+                    {/* <Link className="block px-4 py-2 text-gray-800 hover:bg-gray-200" href="/profile">
                       View Profile
-                    </Link>
+                    </Link> */}
                     <button
                       onClick={logout}
                       className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
