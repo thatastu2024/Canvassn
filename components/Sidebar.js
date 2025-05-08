@@ -55,9 +55,9 @@ export default function Sidebar() {
 
   const routes=[
     { id:1, name: "Dashboard", icon: <Gauge />, path: "/dashboard",allowed:["superadmin"]},
-    { id:2, name: "Agents", icon: <BrainCircuit />, path: "/agents", allowed:["superadmin","admin","employee"] },
+    { id:2, name: "Agents", icon: <BrainCircuit />, path: "/agents", allowed:["superadmin"] },
     { id:3, name: "History", icon: <History />, path: "/conversations", allowed:["superadmin","admin","employee"] },
-    { id:4, name: "Leads", icon: <FileUser />, path: "/prospects", allowed:["superadmin","admin","employee"] },
+    { id:4, name: "Leads", icon: <FileUser />, path: "/prospects", allowed:["superadmin"] },
     { id:5, name: "Knowledge Base", icon: <LibraryBig />, path: "/knowledge-base", allowed:["superadmin"] },
     { id:6, name: "Users", icon: <User />, path: "/users", allowed:["superadmin"] },
     { id:7, name: "Settings", icon: <Settings2 />, path: "/settings",allowed:["superadmin"] },
