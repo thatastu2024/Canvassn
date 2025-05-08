@@ -3,7 +3,8 @@ import Sidebar from './Sidebar';
 import axios from 'axios';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import {jwtDecode} from "jwt-decode";
+import {jwtDecode} from "jwt-decode"; 
+import LoginPage from "@/pages/users/login"
 
 export default function Layout({ children }) {
   const [user, setUser] = useState(null);
@@ -43,6 +44,11 @@ export default function Layout({ children }) {
   }, [loading, user, router]);
 
   if (loading) return <p>Loading...</p>;
+  if(router.pathname === '/users/login'){
+    return (
+      <LoginPage/>
+    )
+  }
   return (
     <div className="flex h-screen">
         <Sidebar />
@@ -50,7 +56,6 @@ export default function Layout({ children }) {
       <Navbar />
       <main className="flex-1 p-4 bg-gray-100 overflow-auto">
         {children}
-        {/* <BotButton /> */}
       </main>
     </div>
     </div>
