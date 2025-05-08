@@ -68,7 +68,7 @@ export default function LoginPage() {
         localStorage.setItem("token", data.token);
         // const success = await login(data.userDetails._id, data.userDetails.prospect_email);
         // if (success) {
-          router.push("/agents");
+          router.push("/conversations");
         // }
       }
     } catch (err) {
