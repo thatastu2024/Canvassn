@@ -16,7 +16,7 @@ export default function ChatHistoryComponent(data) {
   useEffect(()=>{
       fetchData("All")
       fetchAgents()
-  },[])
+  },[setChatHistory])
     const fetchData = async (agentId) => {
       try {
       let token=localStorage.getItem('token')
@@ -27,7 +27,8 @@ export default function ChatHistoryComponent(data) {
           }
       })
         if (!response.data.data.length) {
-          throw new Error("Failed to fetch data");
+          setChatHistory(response.data.data)
+          // throw new Error("Failed to fetch data");
         }
         setChatHistory(response?.data?.data);
       } catch (error) {
@@ -51,25 +52,25 @@ export default function ChatHistoryComponent(data) {
           console.log(error)
         }
       }
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        Loading conversations...
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen">
+  //       Loading conversations...
+  //     </div>
+  //   );
+  // }
   
-  if(!chatHistory?.length === 0 || chatHistory === undefined){
-    return (
-      <div className="flex h-full items-center justify-center">
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold text-gray-500">
-            No Call History Found
-          </h2>
-        </Card>
-      </div>
-    );
-  }
+  // if(!chatHistory?.length === 0 || chatHistory === undefined){
+  //   return (
+  //     <div className="flex h-full items-center justify-center">
+  //       <Card className="p-6">
+  //         <h2 className="text-xl font-semibold text-gray-500">
+  //           No Call History Found
+  //         </h2>
+  //       </Card>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -116,7 +117,21 @@ export default function ChatHistoryComponent(data) {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-        { chatHistory.map((chat, index) => (
+        {
+          loading ? (
+              <div className="flex items-center justify-center min-h-screen">
+                Loading chat...
+              </div>
+          ) : !chatHistory?.length === 0 || chatHistory === undefined ? (
+            <div className="flex h-full items-center justify-center">
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold text-gray-500">
+                  No Call History Found
+                </h2>
+              </Card>
+            </div>
+          ):(
+         chatHistory.map((chat, index) => (
           <tr key={index} className="hover:bg-gray-100">
             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{newFormatDateTime(chat.createdAt)}
             </td>
@@ -132,7 +147,7 @@ export default function ChatHistoryComponent(data) {
             onClick={() => setIsDetailModalOpen(true)}
             ><Eye onClick={e=>{setConversationIdModel(chat._id)}} /></td>
           </tr>
-        ))}
+        )))}
         </tbody>
       </table>
       <div className="flex justify-between items-center mt-4">

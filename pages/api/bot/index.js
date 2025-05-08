@@ -40,7 +40,8 @@ async function handler(req, res) {
               }
               
               const matchStage = {
-                ...(filter.agent_id ? { agent_id: filter.agent_id } : {})
+                ...(filter.agent_id ? { agent_id: filter.agent_id } : {}),
+                user_unique_id: decoded.user_unique_token
               };
               const chatHistory = await ChatHistory.aggregate([
                 { $match: matchStage },
